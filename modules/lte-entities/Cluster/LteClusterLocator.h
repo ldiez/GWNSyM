@@ -3,6 +3,7 @@
 
 #include "LteCluster.h"
 #include "Distance.h"
+#include <random>
 
 /**
  * \brief This class locates clusters of eNBs. 
