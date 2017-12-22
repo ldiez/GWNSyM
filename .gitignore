@@ -2,3 +2,4 @@ build
 scenarios/debug
 scenarios/release
 .lock-wafbuild
+nbproject
