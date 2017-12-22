@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<CLUSTER_SERV>
+    <MACRO_NUMBER>1</MACRO_NUMBER>
+    <PICO_NUMBER>0</PICO_NUMBER>
+</CLUSTER_SERV>
+
+<CLUSTER_INTER>
+    <MACRO_NUMBER>1</MACRO_NUMBER>
+    <PICO_NUMBER>0</PICO_NUMBER>
+</CLUSTER_INTER>
+
+<MACRO>
+    <CELLS_NUM>3</CELLS_NUM>
+    <SECTOR_ANGLE>120</SECTOR_ANGLE>
+    <FREQ_GHZ>2.1</FREQ_GHz>
+    <CELL>
+        <NF units="dB">2.0</NF>
+        <CAPACITY>100</CAPACITY>
+        <TX_POWER units="dBm">46</TX_POWER>
+        <TX_GAIN>16.0</TX_GAIN>
+    </CELL>
+</MACRO>
+
+<PICO>
+    <FREQ_GHZ>3.5</FREQ_GHz>
+    <CELL>
+        <NF units="dB">2.0</NF>
+        <CAPACITY bw="180" bw_units="kHz">100</CAPACITY>
+        <TX_POWER units="dBm">30</TX_POWER>
+        <TX_GAIN units="dB">5.0</TX_GAIN>
+    </CELL>
+</PICO>

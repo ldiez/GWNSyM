@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SERVICES units="kbps">
+    <GENERIC>
+        <DL>1000.0</DL>
+        <UL>100.0</UL>
+    </GENERIC>
+    <VIDEO>
+        <DL>1000.0</DL>
+        <UL>100.0</UL>
+    </VIDEO>
+    <VOICE>
+        <DL>64.0</DL>
+        <UL>1000.0</UL>
+    </VOICE>
+    <INTERNET>
+        <DL>100.0</DL>
+        <UL>50.0</UL>
+    </INTERNET>
+</SERVICES>
+
+<USER>
+    <LTE_UE>
+        <NOISE_FIGURE units="dB">6</NOISE_FIGURE>
+        <RX_GAIN units="dB">0.0</RX_GAIN>
+        <UL_SINR_TH units="dB">5.0</UL_SINR_TH>
+    </LTE_UE>
+</USER>

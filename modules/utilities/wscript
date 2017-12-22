@@ -1,0 +1,24 @@
+#!/usr/bin/env python
+
+def build (ctx) : 
+	
+	other_modules = ['core-utils']
+
+	src = ['**/*.cpp']
+	inc = ['./']
+	print 'Building module: ' + str(ctx.path)
+
+	if ctx.env.log :
+		log_define = ['LOG_ENABLED']
+	else :
+		log_define = []
+
+	ctx.shlib (
+		name = str(ctx.path),
+		target = '../' + str(ctx.path),
+		use = other_modules,
+		defines = log_define,
+		source = ctx.path.ant_glob(src),
+		includes = ctx.path.ant_glob(inc),
+		export_includes = inc
+	)

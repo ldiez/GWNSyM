@@ -1,0 +1,40 @@
+#!/usr/bin/env python
+
+def build (ctx) : 
+	print "Building module: core"
+	
+	if ctx.env.log :
+		log_define = ['LOG_ENABLED']
+	else :
+		log_define = []
+		
+	ctx.shlib (
+		name = 'core-utils',
+		target = '../utils',
+		defines = log_define,
+		source = ctx.path.ant_glob('core-utils/*.cpp'),
+		include = ctx.path.ant_glob('core-utils'),
+		export_includes = 'core-utils'
+		)
+	ctx.shlib (
+		name = 'default-config',
+		target = '../default-config',
+		defines = log_define,
+		use = 'core-utils',
+		source = ctx.path.ant_glob('default-config/*.cpp'),
+		include = ctx.path.ant_glob('default-config'),
+		export_includes = 'default-config'
+		)
+	ctx.shlib (
+		name = 'system',
+		target = '../system',
+		defines = log_define,
+		use = ['core-utils', 'default-config'],
+		source = ctx.path.ant_glob(['system/detail/type-system/*.cpp',\
+			'system/detail/filter-interface/*.cpp',\
+			'system/detail/*.cpp', 'system/*.cpp']),
+		include = ctx.path.ant_glob(['system/detail/type-system',\
+			'system/detail/filter-interface'\
+			'system/detail', 'system']),
+		export_includes = ['system', 'system/detail/type-system']
+		)

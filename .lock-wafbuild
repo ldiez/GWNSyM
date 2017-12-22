@@ -1,0 +1,8 @@
+argv = ['./waf', 'configure']
+environ = {'SPRO_EXPAND_ERRORS': '', 'XDG_RUNTIME_DIR': '/run/user/1000', 'SSH_CLIENT': '10.10.200.35 58445 22', 'LOGNAME': 'administrator', 'USER': 'administrator', 'HOME': '/home/administrator', '__CND_TOOLS__': 'gfortran-5:g++-5:gcc-5:gcc:c++:g++:clang:clang++:icc:icpc:ifort:gfortran:g77:g90:g95:cc:CC:ffortran:f77:f90:f95:ar:ld', 'PATH': '/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'XDG_SESSION_ID': '25', 'LD_LIBRARY_PATH': '/var/tmp/dlight_administrator/9dbf5987/Linux-x86:/var/tmp/dlight_administrator/9dbf5987/Linux-x86_64', 'MAKEFLAGS': '', 'LANG': 'en_US.UTF-8', 'SHELL': '/bin/bash', 'LD_PRELOAD': 'libBuildTrace.so', 'LANGUAGE': 'en_US:en', 'SHLVL': '1', '__CND_BUILD_LOG__': '/var/tmp/dlight_administrator/9dbf5987/exec8829093747251151271.log', 'MAKELEVEL': '1', 'PWD': '/home/administrator', '_': '/var/tmp/dlight_administrator/9dbf5987/613354130/pty', 'MAIL': '/var/mail/administrator', 'SSH_CONNECTION': '10.10.200.35 58445 10.10.120.113 22', 'MFLAGS': '', 'NBMAGIC': '3350'}
+files = ['/home/administrator/gnsym/wscript']
+hash = -7547879461951976850
+options = {'files': '', 'jobs': 1, 'verbose': 0, 'nocache': False, 'progress_bar': 0, 'top': '', 'destdir': '', 'keep': False, 'zones': '', 'prefix': '/usr/local/', 'run': '', 'build': '', 'download': False, 'force': False, 'check_cxx_compiler': 'g++ icpc sunc++', 'targets': '', 'check_c_compiler': 'gcc icc suncc', 'out': ''}
+out_dir = '/home/administrator/gnsym/build'
+run_dir = '/home/administrator/gnsym'
+top_dir = '/home/administrator/gnsym'

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SERVICES units="kbps">
+    <GENERIC>
+        <DL>1000.0</DL>
+        <UL>0.0</UL>
+    </GENERIC>
+    <VIDEO_CAPACITY>1000.0</VIDEO_CAPACITY>
+    <INTERNET_CAPACITY>64.0</INTERNET_CAPACITY>
+    <ENTERPRISE_CAPACITY>64.0</ENTERPRISE_CAPACITY>
+</SERVICES>
+
+<USER>
+    <LTE_UE>
+        <NOISE_FIGURE units="dB">6</NOISE_FIGURE>
+        <RX_GAIN units="dB">0.0</RX_GAIN>
+    </LTE_UE>
+</USER>
