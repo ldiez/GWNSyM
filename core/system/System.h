@@ -55,6 +55,7 @@ public:
      * \return <-- Self reference
      */
     System& AddGlobalConfigFinal(std::string&& finalName, NamePath_t&& path);
+    System& SetTreeBase(std::string&& finalName, NamePath_t&& path);
 
     /**
      * \brief Interface of the asset manager to forward the registered types
@@ -62,6 +63,8 @@ public:
      */
     template < typename TYPE, typename CONF = ts::EMPTY, typename... CONF_ARGS >
     System& AddType(std::string&& name, CONF_ARGS&&... confPath);
+    template < typename TYPE, typename CONF = ts::EMPTY, typename... CONF_ARGS >
+    System& Type(std::string&& name, CONF_ARGS&&... confPath);
 
     /**
      * \brief Create a new set as an aggregation of existing ones
@@ -165,14 +168,15 @@ public:
      * \param name --> Set whether the full name or the short one is shown
      * \return --
      */
-    void PrintTree(ts::NAME const& name = ts::NAME::SHORT) const;
+    void PrintTree(ts::NAME const& name = ts::NAME::FULL) const;
 
     /**
      * \brief Print a tree with the types instantiated and their numbers
      * \param name --> Set whether the full name or the short one is shown
      * \return --
      */
-    void PrintInstances(ts::NAME const& name = ts::NAME::SHORT) const;
+    void PrintInstances(ts::NAME const& name = ts::NAME::FULL) const;
+    void PrintTreeInstances(ts::NAME const& name = ts::NAME::FULL) const;
 
     /**
      * \brief Print information of all the instances without the network
@@ -220,6 +224,14 @@ System::SetConfig(ARGS&&... args)
 template < typename TYPE, typename CONF, typename... CONF_ARGS > System&
 System::AddType(std::string&& name, CONF_ARGS&&... confArgs)
 {
+    HAS_CORRECT_CONF_PARAMS(CONF, CONF_ARGS...);
+    m_am.AddType<TYPE, CONF>(std::forward<std::string>(name),
+            std::forward<CONF_ARGS>(confArgs)...);
+    return *this;
+}
+
+template < typename TYPE, typename CONF, typename... CONF_ARGS > System&
+System::Type(std::string&& name, CONF_ARGS&&... confArgs) {
     HAS_CORRECT_CONF_PARAMS(CONF, CONF_ARGS...);
     m_am.AddType<TYPE, CONF>(std::forward<std::string>(name),
             std::forward<CONF_ARGS>(confArgs)...);
