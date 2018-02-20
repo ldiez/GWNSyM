@@ -15,6 +15,7 @@ LteCellConf::LteCellConf(EnbType enbType, std::string const& path)
 , m_txPowerPerRb(units::Watt(0.0))
 , m_capacity(0.0)
 , m_txGain(0.0)
+, m_rxGain(0.0)
 , m_nf(0.0)
 {
     BEG;
@@ -25,6 +26,7 @@ LteCellConf::LteCellConf(EnbType enbType, std::string const& path)
     m_txPower = ParsePow(conf_.GetAttr<>(strEnbType_ + ".CELL.TX_POWER", "units"),
                          conf_.Get<double>(strEnbType_ + ".CELL.TX_POWER"));
     m_txGain = conf_.Get<double>(strEnbType_ + ".CELL.TX_GAIN");
+    m_rxGain = conf_.Get<double>(strEnbType_ + ".CELL.RX_GAIN");
     m_txPowerPerRb = units::Watt(m_txPower.GetWatt() / m_capacity);
     m_nf = conf_.Get<double>(strEnbType_ + ".CELL.NF");
 
@@ -62,6 +64,13 @@ LteCellConf::GetTxGain(void) const
 {
     BEG END;
     return m_txGain;
+}
+
+units::dB
+LteCellConf::GetRxGain(void) const
+{
+    BEG END;
+    return m_rxGain;
 }
 
 EnbType

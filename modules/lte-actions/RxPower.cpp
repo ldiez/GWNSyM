@@ -99,11 +99,9 @@ LteRxPower(gnsm::Ptr_t<User> user, gnsm::Ptr_t<LteEnb> ae, AntennaType_e ant,
         auto antennaAtt_ = ComputeAntenna(cell_, ae->ReadPosition(), user->ReadPosition(), ant);
         auto power_ = cell_->ReadConfig().GetTxpowerPerRb();
         auto totalAtt_ = pl_ + CouplingLoss_c + antennaAtt_ - gRx_ - gtx_;
-        
         auto applicablePl_ = units::dB(std::max(totalAtt_.RefVal(), Mcl_c.RefVal()));
         power_.Att(applicablePl_);
-
-        user->GetLteDev()->AddCellInfo(cell_, power_, totalAtt_, ae->ReadConf().GetType());
+        user->GetLteDev()->AddCellInfo(ae->ReadId(), cell_, power_, totalAtt_, ae->ReadConf().GetType());
     }
     END;
 }

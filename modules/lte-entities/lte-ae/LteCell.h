@@ -4,9 +4,10 @@
 #include "CoreUtils.h"
 #include "LteCellConf.h"
 
-class LteCell
-{
+class LteCell {
 public:
+    using UesList_t = std::vector<gnsm::Id_t>;
+
     LteCell(gnsm::Id_t id);
 
     void SetConfiguration(LteCellConf const& conf);
@@ -24,7 +25,8 @@ public:
      * \param cap --> Resources required for that user
      * \return <-- True if the connection is accepted, false otherwise
      */
-    bool AddUser(double cap);
+    bool AddDlUser(gnsm::Id_t eu, double cap);
+    bool AddUlUser(gnsm::Id_t u, double cap);
 
     /**
      * \brief Set the sector azimut in degrees
@@ -43,13 +45,15 @@ public:
      * \brief Free resources at the eNB sector in number of RBs
      * \return <-- The number of RBs
      */
-    double GetFreeResources(void) const;
+    double GetDlFreeResources(void) const;
+    double GetUlFreeResources(void) const;
 
     /**
      * \brief Provide the load of the cell
      * \return <-- Load of the cell relative to 1
      */
-    double GetLoad(void) const;
+    double GetDlLoad(void) const;
+    double GetUlLoad(void) const;
 
     /**
      * \brief Reset the current state to get ready for the next iteration
@@ -57,12 +61,29 @@ public:
      */
     void CallUp(void);
 
+    /**
+     * \brief Set eNB ref
+     */
+    void SetEnbId(gnsm::Id_t enbId);
+
+    /**
+     * \brief Get eNB ref
+     */
+    gnsm::Id_t ReadEnbId(void);
+
 private:
+
+
     gnsm::Id_t m_id;
     const LteCellConf* m_conf;
     double m_azimut;
-    double m_freeResources;
-    std::uint32_t m_nConn;
+    gnsm::Id_t m_enbId;
+
+    double m_dlFreeResources;
+    double m_ulFreeResources;
+    UesList_t m_ulUes;
+    UesList_t m_dlUes;
+
 };
 
 #endif /* LTESCELL_H */

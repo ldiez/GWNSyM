@@ -68,7 +68,7 @@ ScdcSelection::Connect(void)
     auto ctr_ = 0u;
     for (auto& user_ : m_tempInfo)
     {
-        auto check_ = user_.m_currCell->AddUser(m_results.at(ctr_));
+        auto check_ = user_.m_currCell->AddDlUser(user_.m_self->ReadId(), m_results.at(ctr_));
         MSG_ASSERT(check_, "Cell capacity exceeded!!");
         ++ctr_;
     }

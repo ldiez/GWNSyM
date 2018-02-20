@@ -23,7 +23,7 @@ static constexpr double SelfPreCod_s = 0.1;
 static constexpr double SelfInterFactor_s = LTE::SinrEff_s * LTE::SelfPreCod_s;
 static constexpr double InterFactor_s = LTE::SinrEff_s * LTE::PreCod_s;
 
-static constexpr double RbAwgnMw_s = NoisePowerWatt(180000)*1000;
+static constexpr double RbAwgnMw_s = NoisePowerWatt(180000)*1000; // Noise power of 1 PRB in mW
 static constexpr double RbAwgnMwEff_s = LTE::SinrEff_s * RbAwgnMw_s;
 
 static constexpr double UlAlpha_s = 1.0;

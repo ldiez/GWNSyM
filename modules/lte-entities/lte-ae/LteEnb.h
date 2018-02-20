@@ -46,6 +46,8 @@ public:
      */
     void CallUp ( void );
     
+    
+    
 private:
     gnsm::Vec_t<LteCell> m_cells;
     const LteEnbConf*  m_conf;

@@ -29,6 +29,7 @@ LteEnb::Aggregate ( std::string const& name, gnsm::ts::Wrapper_t o )
     for ( auto& item_ : m_cells )
     {
         item_->SetAzimut(m_conf->GetSectorizationAngle() * i_);
+        item_->SetEnbId(m_id);
         ++ i_;
     }
 

@@ -77,7 +77,7 @@ SaSelection::Connect(void)
     for (auto& user_ : m_tempInfo)
     {
         INFO ("Connecting user ", ctr_+1, " to ", user_.m_currCell);
-        auto check_ = user_.m_currCell->AddUser(m_ic.GetAssignment(ctr_));
+        auto check_ = user_.m_currCell->AddDlUser(user_.m_self->ReadId(), m_ic.GetAssignment(ctr_));
         ConnectUser(user_, ctr_);
         MSG_ASSERT(check_, "Cell capacity exceeded!!");
         ++ctr_;

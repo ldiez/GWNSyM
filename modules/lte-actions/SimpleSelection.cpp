@@ -49,7 +49,7 @@ SimpleSelection::CalculateSinr(gnsm::Ptr_t<LteUe> ue)
 
     for (auto& item_ : cells_)
     {
-        if (ctr_ < m_maxCells && item_.m_cell->GetFreeResources() > 0)
+        if (ctr_ < m_maxCells && item_.m_cell->GetDlFreeResources() > 0)
         {
             serving_.push_back(item_);
             ++ctr_;

@@ -15,6 +15,7 @@ public:
     Power GetTxpowerPerRb ( void ) const;
     double GetCapacity ( void ) const; // capacity in number of RBs
     units::dB GetTxGain ( void ) const;
+    units::dB GetRxGain ( void ) const;
     
     EnbType GetType (void ) const;
     std::string GetTypeName (void ) const;;
@@ -26,6 +27,7 @@ private:
     Power m_txPowerPerRb; 
     double m_capacity; // number of resource block
     units::dB m_txGain; 
+    units::dB m_rxGain; 
     units::dB m_nf; // noise figure
 };
 

@@ -9,39 +9,39 @@
 #include "Traffic.h"
 #include "Power.h"
 
-class LteUe
-{
+class LteUe {
 public:
     using CellsList_t = gnsm::Vec_t<LteCell>;
 
-    struct CellScan
-    {
-        CellScan(gnsm::Ptr_t<LteCell> cell = nullptr,
-                 Power rsrp = Power(units::Watt(0.0)),
-                 EnbType type = EnbType::NONE)
-        : m_cell(cell)
+    struct CellScan {
+
+        CellScan(gnsm::Id_t enbId = 0,
+                gnsm::Ptr_t<LteCell> cell = nullptr,
+                Power rsrp = Power(units::Watt(0.0)),
+                EnbType type = EnbType::NONE)
+        : m_enbId(enbId)
+        , m_cell(cell)
         , m_rsrp(rsrp)
-        , m_type(type)
-        {
+        , m_type(type) {
         }
-        
+        gnsm::Id_t m_enbId;
         gnsm::Ptr_t<LteCell> m_cell;
         Power m_rsrp;
         EnbType m_type;
     };
 
-    struct UlLosses
-    {
+    struct UlLosses {
 
-        UlLosses(gnsm::Ptr_t<LteCell> cell = nullptr,
-                 units::dB pl = units::dB(0.0),
-                 EnbType type = EnbType::NONE)
-        : m_cell(cell)
+        UlLosses(gnsm::Id_t enbId = 0,
+                gnsm::Ptr_t<LteCell> cell = nullptr,
+                units::dB pl = units::dB(0.0),
+                EnbType type = EnbType::NONE)
+        : m_enbId(enbId)
+        , m_cell(cell)
         , m_pl(pl)
-        , m_type(type)
-        {
+        , m_type(type) {
         }
-
+        gnsm::Id_t m_enbId;
         gnsm::Ptr_t<LteCell> m_cell;
         units::dB m_pl;
         EnbType m_type;
@@ -50,14 +50,12 @@ public:
     using SensedValues_t = std::vector<CellScan>; // DL RSRP sensing
     using UlEstimate_t = std::vector<UlLosses>; // for the UL control power
 
-    struct DlConn
-    {
+    struct DlConn {
         Traffic m_traffic;
         double m_rbs;
     };
 
-    struct UlConn
-    {
+    struct UlConn {
         Power m_power;
         double m_rbs;
     };
@@ -74,7 +72,7 @@ public:
      * \param type --> Type of the eNB holding the cell
      * \return --
      */
-    void AddCellInfo(gnsm::Ptr_t<LteCell> cell, Power rsrp, units::dB ulPl, EnbType type);
+    void AddCellInfo(gnsm::Id_t embId, gnsm::Ptr_t<LteCell> cell, Power rsrp, units::dB ulPl, EnbType type);
 
     /**
      * \brief Provide a list of the cells scanned ordered by the RSRP, the first the highest RSRP
@@ -120,6 +118,7 @@ public:
      * \return -- 
      */
     void UlConnect(CellsList_t cl, UlConn ulc);
+    void UlSetPower(Power pow);
 
     /**
      * \brief Provide current DL connection list

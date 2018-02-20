@@ -7,44 +7,56 @@ LteCell::LteCell(gnsm::Id_t id)
 : m_id(id)
 , m_conf(nullptr)
 , m_azimut(0.0)
-, m_freeResources(0.0)
-, m_nConn(0u)
-{
+, m_dlFreeResources(0.0)
+, m_ulFreeResources(0.0)
+, m_enbId(0u) {
 }
 
 void
-LteCell::SetConfiguration(LteCellConf const& conf)
-{
+LteCell::SetConfiguration(LteCellConf const& conf) {
     BEG;
     m_conf = &conf;
-    m_freeResources = m_conf->GetCapacity();
+    m_dlFreeResources = m_conf->GetCapacity();
+    m_ulFreeResources = m_conf->GetCapacity();
     END;
 }
 
 gnsm::Id_t const&
-LteCell::ReadId(void) const
-{
+LteCell::ReadId(void) const {
     BEG END;
     return m_id;
 }
 
 LteCellConf const&
-LteCell::ReadConfig(void) const
-{
+LteCell::ReadConfig(void) const {
     BEG END;
     return *m_conf;
 }
 
 bool
-LteCell::AddUser(double cap)
-{
+LteCell::AddDlUser(gnsm::Id_t ue, double cap) {
     BEG;
-    if (m_freeResources >= cap)
-    {
-        ++m_nConn;
-        m_freeResources -= cap;
-        INFO(this, " Adding connection with capacity ", cap, " Free resources ", m_freeResources,
-             " after ", m_nConn, " connections");
+    if (m_dlFreeResources >= cap) {
+        m_dlUes.push_back(ue);
+        m_dlFreeResources -= cap;
+        INFO(this, " Adding connection with capacity ", cap,
+                " Free resources ", m_dlFreeResources,
+                " after ", m_dlUes.size(), " connections");
+        return true;
+    }
+    END;
+    return false;
+}
+
+bool
+LteCell::AddUlUser(gnsm::Id_t ue, double cap) {
+    BEG;
+    if (m_ulFreeResources >= cap) {
+        m_ulUes.push_back(ue);
+        m_ulFreeResources -= cap;
+        INFO(this, " Adding connection with capacity ", cap,
+                " Free resources ", m_ulFreeResources,
+                " after ", m_ulUes.size(), " connections");
         return true;
     }
     END;
@@ -52,39 +64,61 @@ LteCell::AddUser(double cap)
 }
 
 void
-LteCell::SetAzimut(double azimut)
-{
+LteCell::SetAzimut(double azimut) {
     BEG;
     m_azimut = azimut;
     END;
 }
 
 double
-LteCell::GetAzimut(void) const
-{
+LteCell::GetAzimut(void) const {
     BEG END;
     return m_azimut;
 }
 
 double
-LteCell::GetFreeResources(void) const
-{
+LteCell::GetDlFreeResources(void) const {
     BEG END;
-    return m_freeResources;
+    return m_dlFreeResources;
 }
 
 double
-LteCell::GetLoad(void) const
-{
+LteCell::GetUlFreeResources(void) const {
     BEG END;
-    return (1.0 - m_freeResources / m_conf->GetCapacity());
+    return m_ulFreeResources;
+}
+
+double
+LteCell::GetDlLoad(void) const {
+    BEG END;
+    return (1.0 - m_dlFreeResources / m_conf->GetCapacity());
+}
+
+double
+LteCell::GetUlLoad(void) const {
+    BEG END;
+    return (1.0 - m_ulFreeResources / m_conf->GetCapacity());
 }
 
 void
-LteCell::CallUp(void)
-{
+LteCell::CallUp(void) {
     BEG;
-    m_freeResources = m_conf->GetCapacity();
-    m_nConn = 0u;
+    m_dlFreeResources = m_conf->GetCapacity();
+    m_ulFreeResources = m_conf->GetCapacity();
+    m_dlUes.clear();
+    m_ulUes.clear();
     END;
+}
+
+void
+LteCell::SetEnbId(gnsm::Id_t enbId) {
+    BEG;
+    m_enbId = enbId;
+    END;
+}
+
+gnsm::Id_t
+LteCell::ReadEnbId(void) {
+    BEG END;
+    return m_enbId;
 }

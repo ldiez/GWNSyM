@@ -54,6 +54,7 @@ public:
      * \param path --> Path to the number of the particular final types
      * \return <-- Self reference
      */
+    [[deprecated("The name of the function is misleading, use 'SetTreeBase' instead")]]
     System& AddGlobalConfigFinal(std::string&& finalName, NamePath_t&& path);
     System& SetTreeBase(std::string&& finalName, NamePath_t&& path);
 

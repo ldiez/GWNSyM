@@ -1018,8 +1018,8 @@ inline Gnuplot::~Gnuplot ( )
 {
     //  remove_tmpfiles();
     // A stream opened by popen() should be closed by pclose()
-    if ( pclose(gnucmd) == -1 )
-        throw GnuplotException("Problem closing communication to gnuplot");
+//    if ( pclose(gnucmd) == -1 )
+//        throw GnuplotException("Problem closing communication to gnuplot");
 }
 
 

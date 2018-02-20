@@ -68,7 +68,7 @@ EnbLoadTrace::MakeStr(gnsm::Ptr_t<LteEnb> const& enb)
     std::stringstream ss_;
     for (auto& cell_ : enb->ReadCells())
     {
-        ss_ << std::setw(10u) << std::setfill(' ') << cell_->GetLoad() << "\t";
+        ss_ << std::setw(10u) << std::setfill(' ') << cell_->GetDlLoad() << "\t";
     }
     ss_ << "\n";
     END;

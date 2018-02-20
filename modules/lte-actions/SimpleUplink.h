@@ -5,18 +5,9 @@
 #include "User.h"
 
 /**
- * \brief Implementation of the uplink association for LTE.
+ * \brief Implementation of the uplink association for LTE. It performs an 
+ * association with the cell with lowesp PL, provided there are enough RBs
  * 
- * Power control:
- * P_{tx} = min {P_{max}, P_0 + 10*log(M) + \alpha * PL + \delta_{mcs} + f(\Delta_i)}
- * 
- * The number of RBs assigned for a user in the uplink are defined upon a target SINR.
- * 
- * Cap = Nrb * log2(1+ SINR)
- * 
- * SINR = P_0 * PL^(1-\alpha)/Noise
- * 
- * It sets the number of 
  */
 class SimpleUplink
 {

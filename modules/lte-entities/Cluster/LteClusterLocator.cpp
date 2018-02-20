@@ -2,7 +2,6 @@
 #include <complex>
 
 #include "LteClusterLocator.h"
-#include "Utils.h"
 
 LOG_REGISTER_MODULE("LteClusterLocator");
 
