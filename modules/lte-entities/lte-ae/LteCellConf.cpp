@@ -28,6 +28,9 @@ LteCellConf::LteCellConf(EnbType enbType, std::string const& path)
     m_txGain = conf_.Get<double>(strEnbType_ + ".CELL.TX_GAIN");
     m_rxGain = conf_.Get<double>(strEnbType_ + ".CELL.RX_GAIN");
     m_txPowerPerRb = units::Watt(m_txPower.GetWatt() / m_capacity);
+    m_txPowerPerRe = units::Watt(m_txPower.GetWatt() / (m_capacity*12));
+//    UWARN ("Number of REs ", m_capacity*12);
+//    UWARN ("RE Tx power ", m_txPowerPerRe.GetDbm(), " dBm");
     m_nf = conf_.Get<double>(strEnbType_ + ".CELL.NF");
 
     INFO("Cell ", strEnbType_, " is configured with");
@@ -50,6 +53,13 @@ LteCellConf::GetTxpowerPerRb(void) const
 {
     BEG END;
     return m_txPowerPerRb;
+}
+
+Power
+LteCellConf::GetTxpowerPerRe(void) const
+{
+    BEG END;
+    return m_txPowerPerRe;
 }
 
 double

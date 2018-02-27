@@ -48,14 +48,14 @@ LteCluster::GetPicos(void) const
 }
 
 gnsm::Id_t 
-LteCluster::ReadId ( void ) const
+LteCluster::GetId ( void ) const
 {
     BEG END;
     return m_id;
 }
 
 LteClusterConf const& 
-LteCluster::ReadConf ( void ) const
+LteCluster::GetConfiguration ( void ) const
 {
     BEG END;
     return *m_conf;

@@ -97,10 +97,10 @@ public:
     /**
      * \brief Amplify/Attenuate power either by dB or lineal scale
      */
-    void Att(double a);
-    void Att(units::dB const& d);
-    void Amp(double a);
-    void Amp(units::dB const& d);
+    Power&  Att(double a);
+    Power&  Att(units::dB const& d);
+    Power&  Amp(double a);
+    Power&  Amp(units::dB const& d);
 
     /**
      * \brief Get raw data in a given unit

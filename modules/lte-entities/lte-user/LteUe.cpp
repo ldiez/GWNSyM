@@ -31,7 +31,7 @@ LteUe::SetConfiguration(LteUeConf const& conf) {
 }
 
 LteUeConf const&
-LteUe::ReadConfiguration(void) {
+LteUe::GetConfiguration(void) {
     BEG END;
     return *m_conf;
 }
@@ -39,8 +39,8 @@ LteUe::ReadConfiguration(void) {
 void
 LteUe::AddCellInfo(gnsm::Id_t enbId, gnsm::Ptr_t<LteCell> cell, Power rsrp, units::dB ulPl, EnbType type) {
     BEG;
-    INFO("Adding cell [", cell, "] of type ", type, "with Rx power ",
-            rsrp.GetMilliWatt(), "mW");
+    INFO("Adding cell [", cell, "] of type ", type, " with Rx power ",
+            rsrp.GetMilliWatt(), " mW");
     m_orderedDl = false;
     m_orderedUl = false;
     m_sensedDlPower.push_back({enbId, cell, rsrp, type});
@@ -49,7 +49,7 @@ LteUe::AddCellInfo(gnsm::Id_t enbId, gnsm::Ptr_t<LteCell> cell, Power rsrp, unit
 }
 
 LteUe::SensedValues_t const&
-LteUe::ReadOrderedCellsDl(void) {
+LteUe::GetOrderedCellsDl(void) {
     BEG;
     if (!m_orderedDl) {
         std::sort(m_sensedDlPower.begin(), m_sensedDlPower.end(), SensedSort);
@@ -61,7 +61,7 @@ LteUe::ReadOrderedCellsDl(void) {
 }
 
 LteUe::CellScan
-LteUe::ReadCellDl(gnsm::Ptr_t<LteCell> const& c) {
+LteUe::GetCellDl(gnsm::Ptr_t<LteCell> const& c) {
     BEG;
     for (auto& item_ : m_sensedDlPower) {
         if (item_.m_cell == c) {
@@ -74,7 +74,7 @@ LteUe::ReadCellDl(gnsm::Ptr_t<LteCell> const& c) {
 }
 
 LteUe::UlEstimate_t const&
-LteUe::ReadOrderedCellsUl(void) {
+LteUe::GetOrderedCellsUl(void) {
     BEG;
     if (!m_orderedUl) {
         std::sort(m_ulEstimates.begin(), m_ulEstimates.end(), EstimateSort);
@@ -85,9 +85,8 @@ LteUe::ReadOrderedCellsUl(void) {
 }
 
 LteUe::UlLosses
-LteUe::ReadCellUl(const gnsm::Ptr_t<LteCell>& c) {
+LteUe::GetCellUl(const gnsm::Ptr_t<LteCell>& c) {
     BEG;
-
     for (auto& item_ : m_ulEstimates) {
         if (item_.m_cell == c) {
             return item_;
@@ -123,37 +122,37 @@ LteUe::UlSetPower(Power pow) {
 }
 
 LteUe::CellsList_t const&
-LteUe::ReadDlConnList(void) const {
+LteUe::GetDlConnList(void) const {
     BEG END;
     return m_dlCells;
 }
 
 LteUe::DlConn const&
-LteUe::ReadDlConnInfo(void) const {
+LteUe::GetDlConnInfo(void) const {
     BEG END;
     return m_dlConn;
 }
 
 LteUe::CellsList_t const&
-LteUe::ReadPrevDlConnList(void) const {
+LteUe::GetPrevDlConnList(void) const {
     BEG END;
     return m_prevDlCells;
 }
 
 LteUe::CellsList_t const&
-LteUe::ReadUlConnList(void) const {
+LteUe::GetUlConnList(void) const {
     BEG END;
     return m_ulCells;
 }
 
 LteUe::UlConn const&
-LteUe::ReadUlConnInfo(void) const {
+LteUe::GetUlConnInfo(void) const {
     BEG END;
     return m_ulConn;
 }
 
 LteUe::CellsList_t const&
-LteUe::ReadPrevUlConnList(void) const {
+LteUe::GetPrevUlConnList(void) const {
     BEG END;
     return m_prevUlCells;
 }
@@ -163,7 +162,6 @@ LteUe::CallUp(void) {
     BEG;
     m_prevDlCells = m_dlCells;
     m_prevUlCells = m_ulCells;
-
     m_sensedDlPower.clear();
     m_ulEstimates.clear();
     m_dlCells.clear();
@@ -171,4 +169,23 @@ LteUe::CallUp(void) {
     m_dlConn = DlConn();
     m_ulConn = UlConn();
     END;
+}
+
+Sinr
+LoadBasedSinr(LteUe::SensedValues_t const& cells, LteUe::CellScan cellInfo, double load) {
+    MSG_ASSERT(load >= 0.0 and load <= 1.0, "Load values has to be relative load "
+            "within [0,1]");
+
+    auto servEnb = cellInfo.m_cell->GetEnb();
+    Sinr s(Bandwidth(LTE::RbBw_s), cellInfo.m_rsrp);
+    //auto servLoad = cell->GetConfiguration().GetCapacity();
+    for (auto& item : cells) {
+        if (item.m_cell == cellInfo.m_cell or servEnb == item.m_cell->GetEnb()) {
+            continue;
+        }
+        auto inter = item.m_rsrp;
+        s.AddInterference(inter.Amp(load));
+    }
+    INFO("SINR ", s.SinrLog(), " dB");
+    return s;
 }

@@ -4,6 +4,7 @@
 #include "CoreUtils.h"
 #include "LteCellConf.h"
 
+class LteEnb;
 class LteCell {
 public:
     using UesList_t = std::vector<gnsm::Id_t>;
@@ -11,13 +12,13 @@ public:
     LteCell(gnsm::Id_t id);
 
     void SetConfiguration(LteCellConf const& conf);
-    gnsm::Id_t const& ReadId(void) const;
+    gnsm::Id_t const& GetId(void) const;
 
     /**
      * \brief Provide reading access to the configuration
      * \return <-- Const reference to the configuration class
      */
-    LteCellConf const& ReadConfig(void) const;
+    LteCellConf const& GetConfiguration(void) const;
 
     /**
      * \brief Connect a new user 
@@ -64,16 +65,21 @@ public:
     /**
      * \brief Set eNB ref
      */
-    void SetEnbId(gnsm::Id_t enbId);
+    void SetEnb(LteEnb* enbId);
 
     /**
      * \brief Get eNB ref
      */
-    gnsm::Id_t ReadEnbId(void);
+    LteEnb* GetEnb(void);
+    
+    /**
+     * \brief Check whether the passed cell belongs to the eNB
+     */
+    bool HasSameEnb (gnsm::Ptr_t<LteCell> other) const;
 
 private:
 
-
+    LteEnb* m_enb;
     gnsm::Id_t m_id;
     const LteCellConf* m_conf;
     double m_azimut;

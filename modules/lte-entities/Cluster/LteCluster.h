@@ -30,9 +30,9 @@ public:
     /**
      * \brief Provide the cluster ID
      */
-    gnsm::Id_t ReadId ( void ) const;
+    gnsm::Id_t GetId ( void ) const;
     
-    LteClusterConf const& ReadConf ( void ) const;
+    LteClusterConf const& GetConfiguration ( void ) const;
     
 private:
     gnsm::Id_t m_id;

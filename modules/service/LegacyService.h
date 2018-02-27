@@ -40,7 +40,7 @@ public:
      * \brief Provide reading access to the statistics 
      * \return <-- Const ref to stats
      */
-    ServiceStats const& ReadStats(void) const;
+    ServiceStats const& GetStats(void) const;
 
 private:
 

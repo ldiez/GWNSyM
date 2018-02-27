@@ -40,7 +40,7 @@ Service::SetIntention(Intention intent)
 }
 
 Intention
-Service::ReadIntention(void) const
+Service::GetIntention(void) const
 {
     BEG END;
     return m_intention;
@@ -72,8 +72,8 @@ Service::DlDemand(void) const
         return Traffic(units::kbps(0.0));
     }
     END;
-    INFO("Service with DL demand ", m_conf->ReadDlCapacity().GetKbps(), "Kbps");
-    return m_conf->ReadDlCapacity();
+    INFO("Service with DL demand ", m_conf->GetDlCapacity().GetKbps(), "Kbps");
+    return m_conf->GetDlCapacity();
 }
 
 Traffic
@@ -88,7 +88,7 @@ Service::UlDemand(void) const
         return Traffic(units::kbps(0.0));
     }
     END;
-    return m_conf->ReadUlCapacity();
+    return m_conf->GetUlCapacity();
 }
 
 void

@@ -26,14 +26,14 @@ void
 UserUpdater::operator() ( User& user )
 {
     BEG;
-    DBG("Updating position of user ", user.ReadId());
-    assert(( user.ReadId() <= m_lines.size() ) && "In DefaultUsersUpdater::Read"
+    DBG("Updating position of user ", user.GetId());
+    assert(( user.GetId() <= m_lines.size() ) && "In DefaultUsersUpdater::Read"
             "==> reading user id out of bounds");
     double x_, y_;
     int videoIntention_;
     int internetIntention_;
 
-    std::string line_(m_lines.at(user.ReadId() - 1));
+    std::string line_(m_lines.at(user.GetId() - 1));
 
     std::istringstream ss_(line_);
     ss_ >> x_; // read x position

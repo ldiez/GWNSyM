@@ -1,5 +1,5 @@
 #ifndef LOG_H
-#define	LOG_H
+#define LOG_H
 
 #include <iostream>
 #include <fstream>
@@ -58,11 +58,13 @@
 #define HEADERS_COL "\033[1m\033[32m" 
 #define WARNING_COL "\033[1m\033[4m\033[33m"
 #define ERROR_COL   "\033[1m\033[4m\033[31m"
-#define ASSERT_COL  "\033[1m\033[4m\033[31;43m"
+#define ASSERT_COL  "\033[1m\033[4m\033[33;41m"//31;43m"
 
 extern bool LogRedirected;
 /******************************************** LOGGING INTERFACE *************************************/
-// #define LOG_ENABLED
+#ifndef LOG_ENABLED
+#define LOG_ENABLED
+#endif
 // #define LOG_ONLY_MODULES
 //#define LOG_ONLY_HEADERS
 //#define LOG_FILE_ENABLED
@@ -74,20 +76,18 @@ extern bool LogRedirected;
  */
 #define LOG_ENV_VAR_NAME "OGASE_LOG"
 
-
 /**
  * \ingroup logging
  * \brief Logging levels. The upper levels include the lower ones
  */
-enum class LogLevel : std::uint8_t
-{
+enum class LogLevel : std::uint8_t {
     NONE, // No logging info
     ERROR, // Only ERROR info
     WARNING, // WARNING and ERROR info
     INFO, // DEBUG and INFO logging info
     DEBUG, // DEBUG, WARNING and ERROR logging info
     ALL // DEBUG, INFO, BEG and END logging info
-} ;
+};
 
 /**
  * \ingroup logging
@@ -158,7 +158,7 @@ std::clog.rdbuf(s_logOut.rdbuf());
  */
 #define BEG \
 if (s_LogModule.GetLevel () == LogLevel::ALL) \
-LogPrint (__TIME_INFO__ __FILE_INFO__ __MODULE_NAME__ " : [IN]      ", \
+LogPrint (__TIME_INFO__ __FILE_INFO__ __MODULE_NAME__ " : [IN    ]  ", \
 __METHOD_NAME__, "\n");
 
 /**
@@ -167,7 +167,16 @@ __METHOD_NAME__, "\n");
  */
 #define END \
 if (s_LogModule.GetLevel () == LogLevel::ALL) \
-LogPrint (__TIME_INFO__ __FILE_INFO__ __MODULE_NAME__ " : [OUT]     ", \
+LogPrint (__TIME_INFO__ __FILE_INFO__ __MODULE_NAME__ " : [OUT   ]  ", \
+__METHOD_NAME__, "\n");
+
+/**
+ * \ingroup logging
+ * \brief Function begin. Only enabled with logging level ALL
+ */
+#define BEGEND \
+if (s_LogModule.GetLevel () == LogLevel::ALL) \
+LogPrint (__TIME_INFO__ __FILE_INFO__ __MODULE_NAME__ " : [IN-OUT]  ", \
 __METHOD_NAME__, "\n");
 
 /**
@@ -229,6 +238,7 @@ __VA_ARGS__ , "\n");\
 #else // DEFINED LOG_ONLY_HEADERS
 #define BEG
 #define END
+#define BEGEND
 #define DBG(...)
 #define INFO(...)
 #define WARN(...)
@@ -330,6 +340,7 @@ __VA_ARGS__, "\n");
 #else // NOT DEFINED LOG_ENABLED
 #define BEG 
 #define END
+#define BEGEND
 #define DBG(...)
 #define INFO(...)
 #define WARN(...)
@@ -363,16 +374,14 @@ __VA_ARGS__, "\n");
  * \brief Variadic TMP print
  */
 template < typename T >
-void LogPrint ( const T& t )
-{
+void LogPrint(const T& t) {
     std::clog << t << "";
 }
 
 template < typename HEAD, typename... TAIL >
-void LogPrint ( HEAD head, TAIL... tail )
-{
-    LogPrint (head);
-    LogPrint (tail...);
+void LogPrint(HEAD head, TAIL... tail) {
+    LogPrint(head);
+    LogPrint(tail...);
 }
 
 /**
@@ -380,8 +389,7 @@ void LogPrint ( HEAD head, TAIL... tail )
  * \brief Extract user readable name of the function ( class::function) from __PRETTY_FUNCTION__
  * compiler macro
  */
-inline std::string FuncName ( std::string name )
-{
+inline std::string FuncName(std::string name) {
     name = name.substr(0, name.rfind("("));
     name = name.substr(name.rfind(" ") + 1, name.size());
     return name;
@@ -392,15 +400,14 @@ inline std::string FuncName ( std::string name )
  * \ingroup logging
  * \brief Give time in a given format
  */
-inline std::string StrTime ( void )
-{
+inline std::string StrTime(void) {
     time_t rawtime;
     char buffer[9];
     struct tm * timeinfo;
-    time ( &rawtime );
-    timeinfo = localtime ( &rawtime );
-    strftime ( buffer, 9, "%H:%M:%S", timeinfo );
-    return std::string (buffer);
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    strftime(buffer, 9, "%H:%M:%S", timeinfo);
+    return std::string(buffer);
 }
 
 
@@ -414,12 +421,10 @@ inline std::string StrTime ( void )
  */
 class LogModule;
 
-class LogManager
-{
+class LogManager {
 public:
 
-    static LogManager& Instance ( void )
-    {
+    static LogManager& Instance(void) {
         static LogManager dm;
         return dm;
     }
@@ -429,7 +434,7 @@ public:
      * \param logMododule
      * \return
      */
-    void Register ( LogModule& logModule );
+    void Register(LogModule& logModule);
 
     /**
      * \brief Sets a logging level for a module
@@ -437,77 +442,76 @@ public:
      * \param level
      * \return
      */
-    void SetLogLevel ( std::string moduleName, LogLevel level );
+    void SetLogLevel(std::string moduleName, LogLevel level);
 
     /**
      * \brief Set a logging level to ALL modules
      * \param level
      * \return
      */
-    void SetLogLevel ( LogLevel level );
+    void SetLogLevel(LogLevel level);
 
     static std::size_t m_maxModuleNameSize;
 private:
-    
+
     using ModulesMap_t = std::map<std::string, LogModule&>;
     ModulesMap_t m_modules;
-    
-    LogManager ( ) = default;
-    ~LogManager ( ) = default;
-    LogManager ( const LogManager& ) = delete;
-    const LogManager& operator= (const LogManager& ) = delete;
-} ;
+
+    LogManager() = default;
+    ~LogManager() = default;
+    LogManager(const LogManager&) = delete;
+    const LogManager& operator=(const LogManager&) = delete;
+};
 
 /**
  * \ingroup logging
  * \brief Class to define a logging
  */
-class LogModule
-{
+class LogModule {
 public:
     /**
      * \brief 
      * \param name Module name
      * \param level Logging level
      */
-    LogModule ( std::string name, LogLevel level = LogLevel::NONE );
-    LogModule ( ) = delete;
+    LogModule(std::string name, LogLevel level = LogLevel::NONE);
+    LogModule() = delete;
 
     /**
      * \brief Get the name of the module
      * \return 
      */
-    std::string GetModuleName ( void ) const;
-    
+    std::string GetModuleName(void) const;
+
     /**
      * \brief Get the name of the module to be printed
      * \return 
      */
-    std::string GetPrintName ( void ) const;
+    std::string GetPrintName(void) const;
 
     /**
      * \brief Set level
      * \param level
      * \return
      */
-    void SetLevel ( LogLevel level );
+    void SetLevel(LogLevel level);
 
     /**
      * \brief Get level
      * \return Logging level
      */
-    LogLevel GetLevel ( void ) const ;
-    
+    LogLevel GetLevel(void) const;
+
 private:
     /**
      * \brief Check environment variable defined by LOG_ENV_VAR_NAME
      */
-    void CheckEnvVar ( void );
-    
-    const std::string   m_name;
-    LogLevel            m_level;
-} ;
+    void CheckEnvVar(void);
+
+    const std::string m_name;
+    LogLevel m_level;
+};
 
 
 
-#endif	/* LOG_H */
+#endif /* LOG_H */

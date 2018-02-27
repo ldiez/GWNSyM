@@ -21,7 +21,7 @@ public:
         {
             for (auto& item_ : macro)
             {
-                auto pos_ = item_->ReadPosition();
+                auto pos_ = item_->GetPosition();
                 ofs_ << pos_.GetX() << "\t" << pos_.GetY() << std::endl;
             }
             ofs_.close();
@@ -32,7 +32,7 @@ public:
         {
             for (auto& item_ : pico)
             {
-                auto pos_ = item_->ReadPosition();
+                auto pos_ = item_->GetPosition();
                 ofs_ << pos_.GetX() << "\t" << pos_.GetY() << std::endl;
             }
             ofs_.close();

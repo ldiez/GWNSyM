@@ -21,9 +21,9 @@ void
 LteAeLocator::operator() ( LteEnb& ae )
 {
     BEG;
-    assert(( ae.ReadId() <= m_positions.size() ) &&
+    assert(( ae.GetId() <= m_positions.size() ) &&
             "In DefaultUsersUpdater::Read ==> reading user id out of bounds");
-    ae.SetPosition(m_positions.at(ae.ReadId() - 1));
+    ae.SetPosition(m_positions.at(ae.GetId() - 1));
     END;
 }
 

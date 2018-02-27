@@ -49,14 +49,14 @@ User::SetPosition(Position pos)
 }
 
 Position const&
-User::ReadPosition(void) const
+User::GetPosition(void) const
 {
     BEG END;
     return m_pos;
 }
 
 gnsm::Id_t
-User::ReadId(void) const
+User::GetId(void) const
 {
     BEG END;
     return m_id;
@@ -77,7 +77,7 @@ User::GetConnectionManager ( void )
 }
 
 UserConf const&
-User::ReadConf(void) const
+User::GetConfiguration(void) const
 {
     BEG END;
     return *m_conf;

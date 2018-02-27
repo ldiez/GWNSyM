@@ -31,7 +31,7 @@ LteClusterConf::ReadInnerConf(void) const
 }
 
 std::string
-LteClusterConf::ReadClusterName(void) const
+LteClusterConf::GetClusterName(void) const
 {
     BEG END;
     return m_cName;

@@ -21,7 +21,7 @@ LocalTranslator::Translate(gnsm::Vec_t<User> const& users, gnsm::Vec_t<LteCell> 
     {
         TranslatedInfo tinfo_;
         tinfo_.m_self = item_;
-        DoSetPowers(item_->GetLteDev()->ReadOrderedCellsDl(), tinfo_);
+        DoSetPowers(item_->GetLteDev()->GetOrderedCellsDl(), tinfo_);
         tv_.at(it_) = tinfo_;
         ++it_;
     }
@@ -110,7 +110,7 @@ LocalTranslator::SetIntPow(TranslatedVec_t& info)
                 else
                 {
                     // the interference is divided by the cell capacity
-                    auto cap_ = iter_->first->ReadConfig().GetCapacity();
+                    auto cap_ = iter_->first->GetConfiguration().GetCapacity();
                     item_.m_interference.at(pos_) =
                             LTE::SelfInterFactor_s * iter_->second / (cap_);
                 }

@@ -44,7 +44,7 @@ OnOff::DoUpdate (ServicesTrack_t::iterator iter)
     auto serv_ = iter->first;
     if (backCtr_ == 0u)
     {
-        if (serv_->ReadIntention() == Intention::IDLE)
+        if (serv_->GetIntention() == Intention::IDLE)
         {
             std::exponential_distribution<> dist_(1.0 / m_on);
             backCtr_ = std::round(dist_(m_gen));

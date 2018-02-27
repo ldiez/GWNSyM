@@ -38,7 +38,7 @@ SquareRandomLocator::operator()(gnsm::Ptr_t<User> user)
     auto x = m_xDist(m_re);
     auto y = m_yDist(m_re);
     user->SetPosition({x, y, UserHeight});
-    DBG("User ", user->ReadId(), " at ", user->ReadPosition());
+    DBG("User ", user->GetId(), " at ", user->GetPosition());
     END;
 }
 

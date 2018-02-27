@@ -24,14 +24,14 @@ ServConf::ServConf(ServType st, std::string const& fileName)
 }
 
 Traffic
-ServConf::ReadDlCapacity(void) const
+ServConf::GetDlCapacity(void) const
 {
     BEG END;
     return m_dlCapacity;
 }
 
 Traffic
-ServConf::ReadUlCapacity(void) const
+ServConf::GetUlCapacity(void) const
 {
     BEG END;
     return m_ulCapacity;

@@ -25,8 +25,8 @@ public:
      * \brief Generic interface
      */
     void SetPosition ( Position pos );
-    Position const& ReadPosition ( void ) const;
-    gnsm::Id_t ReadId ( void ) const;
+    Position const& GetPosition ( void ) const;
+    gnsm::Id_t GetId ( void ) const;
     
     /**
      * \brief Provide access to the LTE UE of the user
@@ -44,7 +44,7 @@ public:
      * \brief Provide reading access to the configuration
      * \return <-- Configuration
      */
-    UserConf const& ReadConf ( void ) const;
+    UserConf const& GetConfiguration ( void ) const;
 
     /**
      * \brief Clear the user state so that it gets ready for the new iteration,

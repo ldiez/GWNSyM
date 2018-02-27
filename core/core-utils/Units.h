@@ -19,7 +19,6 @@ namespace units {
     }
 
     constexpr double Log2lin(double db) {
-
         return std::pow(10.0, db / 10.0);
     }
 
@@ -292,7 +291,7 @@ namespace units {
             return RawVal() != v.RawVal();
         }
 
-    private:
+//    private:
         LogVal() = delete;
         double m_val;
         constexpr static double m_offset = LogOffset<I>;
@@ -355,6 +354,18 @@ namespace units {
     template < LinPref I, LogPref J>
     LinVal<I> Convert(LogVal<J> const& v) {
         return LinVal<I>(Log2lin(v.RefVal()) / LinMult<I>);
+    }
+
+    template < LinPref I >
+    inline std::ostream& operator<<(std::ostream& os, LinVal<I> const& d) {
+        os << d.RawVal();
+        return os;
+    }
+
+    template < LogPref I >
+    inline std::ostream& operator<<(std::ostream& os, LogVal<I> const& d) {
+        os << d.RawVal();
+        return os;
     }
 
 } // namespace units

@@ -55,7 +55,7 @@ LteClusterLocator::DeployPicos(gnsm::Ptr_t<LteCluster> ae)
 {
     BEG;
     auto picos_ = ae->GetPicos();
-    auto macroPos_ = ae->GetMacro()->ReadPosition();
+    auto macroPos_ = ae->GetMacro()->GetPosition();
 
 
     for (auto& item_ : picos_)

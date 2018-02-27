@@ -11,7 +11,7 @@ public:
     
     gnsm::InnerItemsCounterList_t ReadInnerConf ( void ) const;
     
-    std::string ReadClusterName (void ) const;
+    std::string GetClusterName (void ) const;
 private:
     std::uint32_t m_macroNumber;
     std::uint32_t m_picoNumber;

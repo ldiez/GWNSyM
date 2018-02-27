@@ -1,5 +1,5 @@
 #include <iomanip>
-
+#include "lte-ae/LteCell.h"
 #include "EnbLoadTrace.h"
 #include "Log.h"
 
@@ -40,7 +40,7 @@ EnbLoadTrace::operator()(gnsm::Vec_t<LteEnb> enbs)
     for (auto& enb_ : enbs)
     {
         auto str_ = MakeStr(enb_);
-        auto enbType_ = enb_->ReadConf().GetType();
+        auto enbType_ = enb_->GetConfiguration().GetType();
 
         if (enbType_ == EnbType::MACRO)
         {
@@ -66,7 +66,7 @@ EnbLoadTrace::MakeStr(gnsm::Ptr_t<LteEnb> const& enb)
 {
     BEG;
     std::stringstream ss_;
-    for (auto& cell_ : enb->ReadCells())
+    for (auto& cell_ : enb->GetCells())
     {
         ss_ << std::setw(10u) << std::setfill(' ') << cell_->GetDlLoad() << "\t";
     }

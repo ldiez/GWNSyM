@@ -13,13 +13,19 @@ public:
      * \brief Noise figure of the user terminal in dB
      * \return <-- NF
      */
-    units::dB ReadNoiseFigure ( void ) const;
+    units::dB GetNoiseFigure ( void ) const;
     
     /**
      * \brief Reception gain of the user terminal in dB
      * \return <-- Rx gain
      */
-    units::dB ReadRxGain ( void ) const;
+    units::dB GetRxGain ( void ) const;
+    
+    /**
+     * \brief Transmission gain of the user terminal in dB
+     * \return <-- Tx gain
+     */
+    units::dB GetTxGain ( void ) const;
     
     /**
      * \brief Give the SINR threshold for the UL
@@ -29,6 +35,7 @@ public:
     
 private:
     units::dB m_rxGain;
+    units::dB m_txGain;
     units::dB m_noiseFigure;
     units::dB m_ulSinrTh;
 

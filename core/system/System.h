@@ -62,8 +62,11 @@ public:
      * \brief Interface of the asset manager to forward the registered types
      * \return <-- Self reference
      */
+    
     template < typename TYPE, typename CONF = ts::EMPTY, typename... CONF_ARGS >
+    [[deprecated("Use 'Type' instead")]]
     System& AddType(std::string&& name, CONF_ARGS&&... confPath);
+    
     template < typename TYPE, typename CONF = ts::EMPTY, typename... CONF_ARGS >
     System& Type(std::string&& name, CONF_ARGS&&... confPath);
 

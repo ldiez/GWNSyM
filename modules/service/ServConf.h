@@ -15,13 +15,13 @@ public:
      * \brief Provide the capacity demand of the service down-link
      * \return <-- Capacity demand
      */
-    Traffic ReadDlCapacity(void) const;
+    Traffic GetDlCapacity(void) const;
 
     /**
      * \brief Provide the capacity demand of the service up-link
      * \return <-- Capacity demand
      */
-    Traffic ReadUlCapacity(void) const;
+    Traffic GetUlCapacity(void) const;
 
     /**
      * \brief Give the type of the service

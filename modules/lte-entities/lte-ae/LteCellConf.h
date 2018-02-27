@@ -13,7 +13,9 @@ public:
     // provide access to configured parameters
     Power GetTxPower ( void ) const;
     Power GetTxpowerPerRb ( void ) const;
+    Power GetTxpowerPerRe ( void ) const;
     double GetCapacity ( void ) const; // capacity in number of RBs
+    
     units::dB GetTxGain ( void ) const;
     units::dB GetRxGain ( void ) const;
     
@@ -25,6 +27,7 @@ private:
     EnbType m_type;
     Power m_txPower; 
     Power m_txPowerPerRb; 
+    Power m_txPowerPerRe; 
     double m_capacity; // number of resource block
     units::dB m_txGain; 
     units::dB m_rxGain; 

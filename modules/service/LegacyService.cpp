@@ -9,7 +9,7 @@ LegacyService::SetConfiguration(ServConf const& conf)
 {
     BEG;
     m_conf = &conf;
-//    m_capacity = conf->ReadCapacity();
+//    m_capacity = conf->GetCapacity();
     END;
 }
 
@@ -43,7 +43,7 @@ LegacyService::RequiredCapacity(void)
 }
 
 ServiceStats const&
-LegacyService::ReadStats(void) const
+LegacyService::GetStats(void) const
 {
     BEG END;
     return m_stats;

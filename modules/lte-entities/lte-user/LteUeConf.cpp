@@ -7,11 +7,13 @@ LOG_REGISTER_MODULE ( "LteUeConf" );
 
 LteUeConf::LteUeConf ( std::string&& filename ) 
 : m_rxGain ( 0.0 )
+, m_txGain ( 0.0 )
 , m_noiseFigure ( 0.0 )
 , m_ulSinrTh(0.0)
 {
     ConfigXml conf_(filename);
     m_rxGain = conf_.Get<double>("USER.LTE_UE.RX_GAIN");
+    m_txGain = conf_.Get<double>("USER.LTE_UE.TX_GAIN");
     m_noiseFigure = conf_.Get<double>("USER.LTE_UE.NOISE_FIGURE");
     m_ulSinrTh = conf_.Get<double>("USER.LTE_UE.UL_SINR_TH");
     
@@ -21,17 +23,24 @@ LteUeConf::LteUeConf ( std::string&& filename )
 }
 
 units::dB
-LteUeConf::ReadNoiseFigure ( void ) const
+LteUeConf::GetNoiseFigure ( void ) const
 {
     BEG END;
     return m_noiseFigure;
 }
 
 units::dB
-LteUeConf::ReadRxGain ( void ) const
+LteUeConf::GetRxGain ( void ) const
 {
     BEG END;
     return m_rxGain;
+}
+
+units::dB
+LteUeConf::GetTxGain ( void ) const
+{
+    BEG END;
+    return m_txGain;
 }
 
 units::dB

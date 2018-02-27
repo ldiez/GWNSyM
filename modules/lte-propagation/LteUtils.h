@@ -3,6 +3,7 @@
 
 #include <ostream>
 #include <limits>
+#include <c++/5/limits>
 #include "Sinr.h"
 #include "Bandwidth.h"
 
@@ -33,9 +34,11 @@ static const units::dB UlIm_s(2.0);
 static const units::dB OutageSinr_s (0.0);
 
 
-// handy extremely low SINR
-static const units::dB TooLowPower_s (-1000.0);
-static const units::dB TooLowSinr_s (-1000.0);
+// handy extremely low/high
+static const auto TooLow_s = -std::numeric_limits<double>::max();
+static const auto TooHigh_s = std::numeric_limits<double>::max();
+static const units::dB TooLowPower_s (-1.0e6);
+static const units::dB TooLowSinr_s (-1.0e6);
 
 } // namespace LTE
 

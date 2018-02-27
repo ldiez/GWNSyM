@@ -45,10 +45,10 @@ LteUsersConnection::MakeStr (gnsm::Ptr_t<User> const& user)
     BEG;
     std::stringstream ss_;
     auto dev_ = user->GetLteDev();
-    auto ncells_ = dev_->ReadDlConnList().size();
+    auto ncells_ = dev_->GetDlConnList().size();
     auto demand_ = user->GetConnectionManager()->DlDemand().GetKbps();
-    auto achieved_ = dev_->ReadDlConnInfo().m_traffic.GetKbps();
-    auto nrbs_ = dev_->ReadDlConnInfo().m_rbs;
+    auto achieved_ = dev_->GetDlConnInfo().m_traffic.GetKbps();
+    auto nrbs_ = dev_->GetDlConnInfo().m_rbs;
     
     ss_ << std::setw(10) << std::setfill(' ') << ncells_
             << std::setw(10) << std::setfill(' ') << demand_

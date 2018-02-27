@@ -26,7 +26,7 @@ void
 ParallelLteScan::DoUserScan ( gnsm::Ptr_t<User> user, gnsm::Vec_t<LteEnb> enbs )
 {
     BEG;
-    INFO ("Performing scanning of user ", user->ReadId());
+    INFO ("Performing scanning of user ", user->GetId());
     if ( user->IsActive() )
     {
         

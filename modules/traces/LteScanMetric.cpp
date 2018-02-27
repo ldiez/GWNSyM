@@ -41,10 +41,10 @@ LteScanMetric::PrintCells(gnsm::Vec_t<LteEnb> const& enbs)
     m_enbsTrace.Create();
     for (auto& enb_ : enbs)
     {
-        for (auto i = 0u; i < enb_->ReadCells().size(); ++i)
+        for (auto i = 0u; i < enb_->GetCells().size(); ++i)
         {
-            auto x_ = enb_->ReadPosition().GetX();
-            auto y_ = enb_->ReadPosition().GetY();
+            auto x_ = enb_->GetPosition().GetX();
+            auto y_ = enb_->GetPosition().GetY();
             m_enbsTrace.Write(std::to_string(x_) + "\t" + std::to_string(y_)+ "\n");
         }
     }
@@ -73,12 +73,12 @@ LteScanMetric::MakeUserStr(gnsm::Ptr_t<User> const& user)
 {
     BEG;
     std::stringstream ss_;
-    auto x_ = user->ReadPosition().GetX();
-    auto y_ = user->ReadPosition().GetY();
+    auto x_ = user->GetPosition().GetX();
+    auto y_ = user->GetPosition().GetY();
     
     ss_ << std::setw(10) << x_ << '\t' << std::setw(10) << y_ << '\t';
     
-    for (auto& item_ : user->GetLteDev()->ReadOrderedCellsDl())
+    for (auto& item_ : user->GetLteDev()->GetOrderedCellsDl())
     {
         ss_ << std::setw(10) << item_.m_rsrp.GetDbm() << '\t';
     }

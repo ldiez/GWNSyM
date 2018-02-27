@@ -24,7 +24,7 @@
 #include "SolversComparer.h"
 #include "EnbLoadTrace.h"
 #include "LteUsersConnection.h"
-#include "SimpleUplink.h"
+#include "UlAccessSelection/SimpleUplink.h"
 
 // configuration paths
 #define GLOB_CONF "./config-files/SCDC/GLOB_CONF.cfg"
@@ -49,21 +49,21 @@ main(int argc, char** argv)
     LOG_SET_LEVEL("LteUe", LogLevel::INFO);
     LOG_SET_LEVEL("SimpleUplink", LogLevel::ALL);
 
-    net_.AddType<User, UserConf>("USER");
-    net_.AddType<LteUe, LteUeConf>("LTE_UE", USERS_CONF);
+    net_.Type<User, UserConf>("USER");
+    net_.Type<LteUe, LteUeConf>("LTE_UE", USERS_CONF);
 
-    net_.AddType<LteCell, LteCellConf>("MACRO_CELL", EnbType::MACRO, ENBS_CONF);
-    net_.AddType<LteEnb, LteEnbConf>("MACRO", EnbType::MACRO, ENBS_CONF);
-    net_.AddType<LteCell, LteCellConf>("PICO_CELL", EnbType::PICO, ENBS_CONF);
-    net_.AddType<LteEnb, LteEnbConf>("PICO", EnbType::PICO, ENBS_CONF);
-    net_.AddType<LteCluster, LteClusterConf>("CLUSTER_SERV", ENBS_CONF, "CLUSTER_SERV");
-    net_.AddType<LteCluster, LteClusterConf>("CLUSTER_INTER", ENBS_CONF, "CLUSTER_INTER");
-    net_.AddType<Service, ServConf>("GENERIC_SERVICE", ServType::GENERIC, USERS_CONF);
+    net_.Type<LteCell, LteCellConf>("MACRO_CELL", EnbType::MACRO, ENBS_CONF);
+    net_.Type<LteEnb, LteEnbConf>("MACRO", EnbType::MACRO, ENBS_CONF);
+    net_.Type<LteCell, LteCellConf>("PICO_CELL", EnbType::PICO, ENBS_CONF);
+    net_.Type<LteEnb, LteEnbConf>("PICO", EnbType::PICO, ENBS_CONF);
+    net_.Type<LteCluster, LteClusterConf>("CLUSTER_SERV", ENBS_CONF, "CLUSTER_SERV");
+    net_.Type<LteCluster, LteClusterConf>("CLUSTER_INTER", ENBS_CONF, "CLUSTER_INTER");
+    net_.Type<Service, ServConf>("GENERIC_SERVICE", ServType::GENERIC, USERS_CONF);
 
     // Global deployment
-    net_.AddGlobalConfigFinal("CLUSTER_SERV",{"CLUSTER_SERV", "NUMBER"});
-    net_.AddGlobalConfigFinal("CLUSTER_INTER",{"CLUSTER_INTER", "NUMBER"});
-    net_.AddGlobalConfigFinal("USER",{"USER", "NUMBER"});
+    net_.SetTreeBase("CLUSTER_SERV",{"CLUSTER_SERV", "NUMBER"});
+    net_.SetTreeBase("CLUSTER_INTER",{"CLUSTER_INTER", "NUMBER"});
+    net_.SetTreeBase("USER",{"USER", "NUMBER"});
     net_.SetConfig<gnsm::Configurer>(GLOB_CONF);
     net_.Deploy();
 

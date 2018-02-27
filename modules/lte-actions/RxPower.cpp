@@ -6,43 +6,40 @@
 #include "Sinr.h"
 
 LOG_REGISTER_MODULE("RxPower");
-
 using namespace LTE;
 
 // cable losses in dB
 static const units::dB CouplingLoss_c(2.0); // cable
-static const units::dB Mcl_c(70.0);
+static const units::dB MinCL_c(70.0);
+static const units::dB MaxCl_c(140.7);
+static const Power MinRsRp_c(units::dBm(-140));
+static const Power MaxRsRp_c(units::dBm(-44));
 
 units::dB
-ComputePathloss(EnbType type, gnsm::Ptr_t<User> user, gnsm::Ptr_t<LteEnb> ae, PropType_e prop)
-{
+ComputePathloss(EnbType type, gnsm::Ptr_t<User> user, gnsm::Ptr_t<LteEnb> ae, PropType_e prop) {
     BEG;
-
-    auto hbs_ = units::m(ae->ReadPosition().GetZ());
-    auto hut_ = units::m(user->ReadPosition().GetZ());
-    auto frec_ = ae->ReadConf().GetFrequency();
-    auto distance_ = GetPlanarDistance(user->ReadPosition(), ae->ReadPosition()).GetUnitsM();
+    auto hbs_ = units::m(ae->GetPosition().GetZ());
+    auto hut_ = units::m(user->GetPosition().GetZ());
+    auto frec_ = ae->GetConfiguration().GetFrequency();
+    auto distance_ = GetPlanarDistance(user->GetPosition(), ae->GetPosition()).GetUnitsM();
     INFO("Distance ", distance_.RawVal());
     END;
-    if (type == EnbType::MACRO)
-    {
-        INFO("Computing MACRO pathloss with distance ", distance_.RawVal(), "m");
+    if (type == EnbType::MACRO) {
+        INFO("Computing MACRO pathloss with distance ", distance_, " m");
         return (prop == PropType_e::FULL ?
                 UmaPathloss(distance_, frec_, hbs_, hut_) :
                 prop == PropType_e::LOS ?
                 UmaPathloss_LOS(distance_, frec_, hbs_, hut_) :
                 UmaPathloss_NLOS(distance_, frec_, hbs_, hut_));
-    }
-    else if (type == EnbType::MICRO)
-    {
-        INFO("Computing MICRO pathloss with distance ", distance_.RawVal(), "m");
+    } else if (type == EnbType::MICRO) {
+        INFO("Computing MICRO pathloss with distance ", distance_, "m");
         return (prop == PropType_e::FULL ?
                 UmiPathloss(distance_, frec_, hbs_, hut_) :
                 prop == PropType_e::LOS ?
                 UmiPathloss_LOS(distance_, frec_, hbs_, hut_) :
                 UmiPathloss_NLOS(distance_, frec_, hbs_, hut_));
     }
-    INFO("Computing PICO pathloss with distance ", distance_.RawVal(), "m");
+    INFO("Computing PICO pathloss with distance ", distance_, "m");
     return (prop == PropType_e::FULL ?
             UpiPathloss(distance_, frec_, hbs_, hut_) :
             prop == PropType_e::LOS ?
@@ -51,10 +48,8 @@ ComputePathloss(EnbType type, gnsm::Ptr_t<User> user, gnsm::Ptr_t<LteEnb> ae, Pr
 }
 
 units::dB
-ComputeAntenna(gnsm::Ptr_t<LteCell> cell, Position const& enbPos, Position const& uPos, AntennaType_e ant)
-{
-    if (cell->ReadConfig().GetType() != EnbType::MACRO)
-    {
+ComputeAntenna(gnsm::Ptr_t<LteCell> cell, Position const& enbPos, Position const& uPos, AntennaType_e ant) {
+    if (cell->GetConfiguration().GetType() != EnbType::MACRO) {
         return units::dB(0.0);
     }
     return (ant == AntennaType_e::HONLY ?
@@ -62,61 +57,52 @@ ComputeAntenna(gnsm::Ptr_t<LteCell> cell, Position const& enbPos, Position const
             ComputeAntennaAtt(cell->GetAzimut(), enbPos, uPos));
 }
 
-/**
- * DOWNLINK BUDGET
- * 
- * - Transmitter
- * EIRP(dBm) = Tx_pow(dBm) + Tx_gain(dBi) - Cable_loss(dB) 
- * 
- * - Receiver
- * Receiver_noise_floor(dBm) = UE_NF(dB) + Th_noise(dBm)
- * 
- * UPLINK BUDGET
- * 
- * - Transmitter
- * EIRP = Tx_pow(dBm) + Tx_gain(dBi)
- * 
- * - Receiver
- * 
- * 
- */
-
-
 void
 LteRxPower(gnsm::Ptr_t<User> user, gnsm::Ptr_t<LteEnb> ae, AntennaType_e ant,
-           PropType_e prop)
-{
+        PropType_e prop) {
     BEG;
     auto lteUe_ = user->GetLteDev();
-    auto gRx_ = lteUe_->ReadConfiguration().ReadRxGain();
-
-    auto pl_ = ComputePathloss(ae->ReadConf().GetType(), user, ae, prop);
-    INFO("Pathloss ", pl_.RawVal());
-
-    for (auto& cell_ : ae->ReadCells())
-    {
-        auto gtx_ = cell_->ReadConfig().GetTxGain();
-        auto antennaAtt_ = ComputeAntenna(cell_, ae->ReadPosition(), user->ReadPosition(), ant);
-        auto power_ = cell_->ReadConfig().GetTxpowerPerRb();
-        auto totalAtt_ = pl_ + CouplingLoss_c + antennaAtt_ - gRx_ - gtx_;
-        auto applicablePl_ = units::dB(std::max(totalAtt_.RefVal(), Mcl_c.RefVal()));
-        power_.Att(applicablePl_);
-        user->GetLteDev()->AddCellInfo(ae->ReadId(), cell_, power_, totalAtt_, ae->ReadConf().GetType());
+    auto ueRxGain_ = lteUe_->GetConfiguration().GetRxGain();
+    auto pl_ = ComputePathloss(ae->GetConfiguration().GetType(), user, ae, prop);
+    for (auto& cell_ : ae->GetCells()) {
+        auto cellTxGain_ = cell_->GetConfiguration().GetTxGain();
+        auto antennaAtt_ = ComputeAntenna(cell_, ae->GetPosition(),
+                user->GetPosition(), ant);
+        auto rsrp_ = cell_->GetConfiguration().GetTxpowerPerRe();
+        INFO("============ Tx power per RE ", rsrp_.GetDbm(), " dBm");
+        INFO("PATH LOSS  ", pl_, " dB");
+        INFO("Cell gain  ", cellTxGain_, " dB");
+        INFO("UE gain  ", ueRxGain_, " dB");
+        auto totalAtt_ = pl_ + CouplingLoss_c + antennaAtt_ -
+                cellTxGain_ - ueRxGain_;
+        auto applicablePl_ = totalAtt_;// > MinCL_c ? totalAtt_ : MinCL_c;
+        rsrp_.Att(applicablePl_);
+        INFO ("Rsrp ", rsrp_.GetDbm(), " dBm")
+        rsrp_ = rsrp_ > MaxRsRp_c ? MaxRsRp_c : rsrp_;
+        if (rsrp_ < MinRsRp_c) {
+            WARN("MAX CL for ", cell_);
+            user->GetLteDev()->AddCellInfo(ae->GetId(), cell_,
+                    Power(units::dBW(TooLow_s)),
+                    units::dB(TooHigh_s),
+                    ae->GetConfiguration().GetType());
+        } else {
+            user->GetLteDev()->AddCellInfo(ae->GetId(), cell_, rsrp_, 
+                    applicablePl_, ae->GetConfiguration().GetType());
+        }
     }
     END;
 }
 
 RxPower::RxPower(AntennaType_e ant, PropType_e prop)
 : m_antennaType(ant)
-, m_propType(prop)
-{
-    BEG END;
+, m_propType(prop) {
+    BEGEND;
 }
 
 void
-RxPower::operator()(gnsm::Ptr_t<User> user, gnsm::Ptr_t<LteEnb> ae)
-{
+RxPower::operator()(gnsm::Ptr_t<User> user, gnsm::Ptr_t<LteEnb> ae) {
     BEG;
+    WARN("User ", user->GetId(), " with ae ", ae->GetId())
     LteRxPower(user, ae, m_antennaType, m_propType);
     END;
 }

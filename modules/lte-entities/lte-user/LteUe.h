@@ -62,7 +62,7 @@ public:
 
     explicit LteUe(gnsm::Id_t id);
     void SetConfiguration(LteUeConf const& conf);
-    LteUeConf const& ReadConfiguration(void);
+    LteUeConf const& GetConfiguration(void);
 
     /**
      * \brief Store the power sensed from an specific cell 
@@ -78,7 +78,7 @@ public:
      * \brief Provide a list of the cells scanned ordered by the RSRP, the first the highest RSRP
      * \return <-- Ordered vector of cells
      */
-    SensedValues_t const& ReadOrderedCellsDl(void);
+    SensedValues_t const& GetOrderedCellsDl(void);
 
     /**
      * \brief Give DL information of a given cell
@@ -86,7 +86,7 @@ public:
      * \return <-- Cell info. If the cell does not exist the information is empty, so the 
      * ptr to the cell within the information struct is nullptr
      */
-    CellScan ReadCellDl(gnsm::Ptr_t<LteCell> const& c);
+    CellScan GetCellDl(gnsm::Ptr_t<LteCell> const& c);
 
     /**
      * \brief Give the list of available cells for UL ordered by the lowest path-loss.
@@ -94,7 +94,7 @@ public:
      * Rx gains
      * \return <-- List of cells
      */
-    UlEstimate_t const& ReadOrderedCellsUl(void);
+    UlEstimate_t const& GetOrderedCellsUl(void);
 
     /**
      * \brief Give UL information of a given cell
@@ -102,7 +102,7 @@ public:
      * \return <-- Cell info. If the cell does not exist the information is empty, so the 
      * ptr to the cell within the information struct is nullptr
      */
-    UlLosses ReadCellUl(gnsm::Ptr_t<LteCell> const& c);
+    UlLosses GetCellUl(gnsm::Ptr_t<LteCell> const& c);
 
     /**
      * \brief Perform user connection for down-link
@@ -124,37 +124,37 @@ public:
      * \brief Provide current DL connection list
      * \return <-- List of cells
      */
-    CellsList_t const& ReadDlConnList(void) const;
+    CellsList_t const& GetDlConnList(void) const;
 
     /**
      * \brief Give information of the DL connection
      * \return <-- DL conn info
      */
-    DlConn const& ReadDlConnInfo(void) const;
+    DlConn const& GetDlConnInfo(void) const;
 
     /**
      * \brief Give list of previous DL cells
      * \return <-- DL cells
      */
-    CellsList_t const& ReadPrevDlConnList(void) const;
+    CellsList_t const& GetPrevDlConnList(void) const;
 
     /**
      * \brief Provide current UL connection list
      * \return <-- List of cells
      */
-    CellsList_t const& ReadUlConnList(void) const;
+    CellsList_t const& GetUlConnList(void) const;
 
     /**
      * \brief Give information about the UL connection
      * \return <-- UL conn info
      */
-    UlConn const& ReadUlConnInfo(void) const;
+    UlConn const& GetUlConnInfo(void) const;
 
     /**
      * \brief Give the list of UL cells
      * \return <-- List of cells
      */
-    CellsList_t const& ReadPrevUlConnList(void) const;
+    CellsList_t const& GetPrevUlConnList(void) const;
 
     /**
      * \brief Remove the list of cells of the connection
@@ -189,6 +189,9 @@ private:
     gnsm::Id_t m_id;
     const LteUeConf* m_conf;
 };
+
+Sinr
+LoadBasedSinr(LteUe::SensedValues_t const& cells, LteUe::CellScan cell, double load);
 
 #endif /* LTEUE_H */
 

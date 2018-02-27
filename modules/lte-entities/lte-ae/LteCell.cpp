@@ -1,15 +1,16 @@
 #include "LteCell.h"
+#include "LteEnb.h"
 #include "Log.h"
 
 LOG_REGISTER_MODULE("LteCell")
 
 LteCell::LteCell(gnsm::Id_t id)
-: m_id(id)
+: m_enb(nullptr)
+, m_id(id)
 , m_conf(nullptr)
 , m_azimut(0.0)
 , m_dlFreeResources(0.0)
-, m_ulFreeResources(0.0)
-, m_enbId(0u) {
+, m_ulFreeResources(0.0) {
 }
 
 void
@@ -22,13 +23,13 @@ LteCell::SetConfiguration(LteCellConf const& conf) {
 }
 
 gnsm::Id_t const&
-LteCell::ReadId(void) const {
+LteCell::GetId(void) const {
     BEG END;
     return m_id;
 }
 
 LteCellConf const&
-LteCell::ReadConfig(void) const {
+LteCell::GetConfiguration(void) const {
     BEG END;
     return *m_conf;
 }
@@ -111,14 +112,20 @@ LteCell::CallUp(void) {
 }
 
 void
-LteCell::SetEnbId(gnsm::Id_t enbId) {
+LteCell::SetEnb(LteEnb* enbId) {
     BEG;
-    m_enbId = enbId;
+    m_enb = enbId;
     END;
 }
 
-gnsm::Id_t
-LteCell::ReadEnbId(void) {
+LteEnb*
+LteCell::GetEnb(void) {
     BEG END;
-    return m_enbId;
+    return m_enb;
+}
+
+bool
+LteCell::HasSameEnb(gnsm::Ptr_t<LteCell> other) const {
+    BEGEND;
+    return (other->GetEnb() == m_enb);
 }

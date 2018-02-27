@@ -179,7 +179,7 @@ Power::operator-=(dBm const& dbm)
 
 bool Power::operator<(Power const& p) const
 {
-    return m_w > p.m_w;
+    return m_w < p.m_w;
 }
 
 bool Power::operator<(Watt const& p) const
@@ -327,28 +327,32 @@ bool Power::operator!=(dBm const& p) const
     return m_w != To<Watt>::Do(p);
 }
 
-void
+Power& 
 Power::Att(double a)
 {
     m_w *= 1.0 / a;
+    return *this;
 }
 
-void
+Power& 
 Power::Att(dB const& d)
 {
     m_w *= 1.0 / Log2lin(d.RefVal());
+    return *this;
 }
 
-void
+Power& 
 Power::Amp(double a)
 {
     m_w *= a;
+    return *this;
 }
 
-void
+Power& 
 Power::Amp(dB const& d)
 {
     m_w *= Log2lin(d.RefVal());
+    return *this;
 }
 
 double

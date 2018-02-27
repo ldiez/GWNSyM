@@ -24,6 +24,7 @@
         <NOISE_FIGURE units="dB">6</NOISE_FIGURE>
         <RX_GAIN units="dB">0.0</RX_GAIN>
         <TX_GAIN units="dB">0.0</TX_GAIN>
+        <DL_MIN_SINR units="dB">-5.0</DL_MIN_SINR>
         <UL_SINR_TH units="dB">5.0</UL_SINR_TH>
     </LTE_UE>
 </USER>

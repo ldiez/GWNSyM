@@ -1,5 +1,6 @@
 #include "LteEnb.h"
 #include "Log.h"
+#include "LteCell.h"
 
 LOG_REGISTER_MODULE ( "LteEnb" )
 
@@ -28,16 +29,15 @@ LteEnb::Aggregate ( std::string const& name, gnsm::ts::Wrapper_t o )
     auto i_ = 0u;
     for ( auto& item_ : m_cells )
     {
-        item_->SetAzimut(m_conf->GetSectorizationAngle() * i_);
-        item_->SetEnbId(m_id);
+        item_->SetAzimut((m_conf->GetSectorizationAngle() * i_) - 30);
+        item_->SetEnb(this);
         ++ i_;
     }
-
     END;
 }
 
 gnsm::Id_t
-LteEnb::ReadId ( void ) const
+LteEnb::GetId ( void ) const
 {
     BEG END;
     return m_id;
@@ -52,21 +52,21 @@ LteEnb::SetPosition ( Position pos )
 }
 
 Position const&
-LteEnb::ReadPosition ( void ) const
+LteEnb::GetPosition ( void ) const
 {
     BEG END;
     return m_pos;
 }
 
 LteEnbConf const& 
-LteEnb::ReadConf ( void ) const
+LteEnb::GetConfiguration ( void ) const
 {
     BEG END;
     return *m_conf;
 }
 
 gnsm::Vec_t<LteCell> const&
-LteEnb::ReadCells ( void ) const
+LteEnb::GetCells ( void ) const
 {
     BEG END;
     return m_cells;
@@ -78,7 +78,7 @@ LteEnb::GetCell ( gnsm::Id_t sectorId) const
     BEG;
     for (auto& item_ : m_cells)
     {
-        if (item_->ReadId() == sectorId)
+        if (item_->GetId() == sectorId)
         {
             END;
             return item_;

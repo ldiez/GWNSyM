@@ -26,7 +26,7 @@ public:
      * \return --
      */
     void SetIntention(Intention intent);
-    Intention ReadIntention(void) const;
+    Intention GetIntention(void) const;
 
     void SetConfiguration(ServConf const& conf);
 

@@ -3,12 +3,10 @@
 
 #include "CoreUtils.h"
 #include "Position.h"
-
 #include "LteEnbConf.h"
-#include "LteCell.h"
-
 #include "Wrapper.h"
 
+class LteCell;
 class LteEnb
 {
 public:
@@ -18,21 +16,21 @@ public:
      * \brief System interface
      */
     void SetConfiguration ( LteEnbConf const& conf);
-    LteEnbConf const& ReadConf ( void ) const;
+    LteEnbConf const& GetConfiguration ( void ) const;
     void Aggregate ( std::string const& name, gnsm::ts::Wrapper_t o );
     
     /**
      * \brief Generic stuff
      */
-    gnsm::Id_t ReadId ( void ) const;
+    gnsm::Id_t GetId ( void ) const;
     void SetPosition ( Position pos );
-    Position const& ReadPosition ( void ) const;
+    Position const& GetPosition ( void ) const;
     
     /**
      * \brief Provide access to the sectors. The return value can be copied.
      * \return <-- Vector of sectors
      */
-    gnsm::Vec_t<LteCell> const& ReadCells ( void ) const;
+    gnsm::Vec_t<LteCell> const& GetCells ( void ) const;
     
     /**
      * \brief Get a sector by ID
@@ -45,8 +43,6 @@ public:
      * \brief Prepare the instance for a new iteration
      */
     void CallUp ( void );
-    
-    
     
 private:
     gnsm::Vec_t<LteCell> m_cells;
