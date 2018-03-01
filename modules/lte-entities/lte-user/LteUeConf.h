@@ -33,11 +33,17 @@ public:
      */
     units::dB UlSinrTh ( void ) const;
     
+    /**
+     * \brief Get maximum transmission power
+     */
+    Power GetPmax ( void ) const;
+    
 private:
     units::dB m_rxGain;
     units::dB m_txGain;
     units::dB m_noiseFigure;
     units::dB m_ulSinrTh;
+    Power m_pMax;
 
 };
 #endif	/* LTEUECONF_H */

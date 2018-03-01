@@ -77,6 +77,18 @@ LteCell::GetAzimut(void) const {
     return m_azimut;
 }
 
+double 
+LteCell::GetDlResources(void) const {
+    BEGEND;
+    return m_conf->GetCapacity();
+}
+
+double 
+LteCell::GetUlResources(void) const {
+    BEGEND;
+    return m_conf->GetCapacity();
+}
+
 double
 LteCell::GetDlFreeResources(void) const {
     BEG END;

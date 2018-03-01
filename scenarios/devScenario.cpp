@@ -12,14 +12,18 @@
 #include "User.h"
 
 #include "RxPower.h"
+#include "ParallelLteScan.h"
 #include "PrintUsers.h"
 #include "SquareRandomLocator.h"
 #include "CallUp.h"
-#include "UlAccessSelection/SimpleUplink.h"
+#include "UlAccessSelection/UplinkConn.h"
+#include "UlAccessSelection/UplinkPowSimple.h"
+#include "UlAccessSelection/UplinkEffectiveSinr.h"
 #include "PosRaster-2d.h"
 #include "lte-ae/EnbHexLocator.h"
 #include "lte-ae/EnbRandLocator.h"
 #include "MoveAwayLocator.h"
+#include "ServiceAlwaysOn.h"
 
 // configuration paths
 #define GLOB_CONF "./config-files/DEV/GLOB_CONF.cfg"
@@ -32,10 +36,10 @@ main(void) {
 
     //    LOG_SET_ALL_LEVEL(LogLevel::ALL)
     //    LOG_SET_LEVEL("PrintUsers", LogLevel::WARNING);
-    //    LOG_SET_LEVEL("SimpleUplink", LogLevel::ALL);
-    //    LOG_SET_LEVEL("LteUe", LogLevel::INFO)
+    //    LOG_SET_LEVEL("UplinkConn", LogLevel::INFO);
     //    LOG_SET_LEVEL("RxPower", LogLevel::INFO)
-    LOG_SET_LEVEL("PrintUsers", LogLevel::INFO)
+    //    LOG_SET_LEVEL("UplinkPowSimple", LogLevel::INFO)
+    //    LOG_SET_LEVEL("UplinkEffectiveSinr", LogLevel::INFO)
     //
     net.Type<User, UserConf>("USER");
     net.Type<LteUe, LteUeConf>("LTE_UE", USERS_CONF);
@@ -55,18 +59,23 @@ main(void) {
     net.PrintInstances();
     //
     net.Aggregate("ENBS",{"MACRO", "PICO"});
-    net.Initializer<EnbHexLocator>({"MACRO"}, units::m(0), units::m(450), 1);
+    net.Initializer<EnbHexLocator>({"MACRO"}, units::m(0), units::m(500), 2);
     //    net.Initializer<EnbRandLocator>({"PICO"}, units::m(-600), units::m(600));
-    //    net.Action<PosRaster_2d>({"USER"}, 10, 1200, -600);
+    net.Action<ServiceAlwaysOn>({"USER::*::GENERIC_SERVICE"});
     net.Action<UserCallUp>({"USER"});
     net.Action<EnbCallUp>({"ENB"});
-    net.Action<MoveAwayLocator>({"USER"}, Position{0, 0, 1.5}, units::m(1));
+    // All prepared
+    net.Action<SquareRandomLocator>({"USER"}, units::m(-1000), units::m(1000));
+    //    net.Action<ParallelLteScan>({"USER", "ENBS"}, AntennaType_e::HV, PropType_e::FULL);
     net.Action<RxPower>({"USER", "ENBS"}, AntennaType_e::HV, PropType_e::FULL);
-    net.Action<PrintUsers>({"USER"}, PrintUsers::PrintType::RSRPDIST);
-    net.Action<SimpleUplink>("USER", SimpleUplink::Mode::RSRP);
-    // calculate POWER
-    // calculate affective SINR
-    
+    net.Action<UplinkConn>({"USER"}, UplinkConn::Mode::RSRP);
+    //    net.Action<PrintUsers>({"USER"}, PrintUsers::PrintType::CONSOLE);
+    net.Action<UplinkPowSimple>({"USER"});
+
+    net.Action<UplinkEffectiveSinr>({"USER"});
+    net.Action<PrintUsers>({"USER"}, PrintUsers::PrintType::EFF_SINR);
+    // calculate effective SINR
+
     auto start_ = std::chrono::steady_clock::now();
     net.Run();
     std::cout << std::chrono::duration_cast <std::chrono::milliseconds>

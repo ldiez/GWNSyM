@@ -24,7 +24,7 @@
 #include "SolversComparer.h"
 #include "EnbLoadTrace.h"
 #include "LteUsersConnection.h"
-#include "UlAccessSelection/SimpleUplink.h"
+//#include "UlAccessSelection/SimpleUplink.h"
 
 // configuration paths
 #define GLOB_CONF "./config-files/SCDC/GLOB_CONF.cfg"
@@ -86,7 +86,7 @@ main(int argc, char** argv)
     net_.Action<EnbCallUp>({"ALL_ENBS"});
 
     net_.Action<ParallelLteScan>({"USER", "ALL_ENBS"}, AntennaType_e::HONLY, PropType_e::FULL);
-    net_.Action<SimpleUplink>({"USER"}); 
+//    net_.Action<SimpleUplink>({"USER"}); 
 //    net_.Action<SaSelection>({"USER", "INTER_CELLS"}, 0.0, 0.0, units::dB(0.0));
 //    net_.Action<EnbLoadTrace>({"SERVING_ENBS"}, "./RESULTS/SCDC");
 //    net_.Action<LteUsersConnection>({"USER"}, "./RESULTS/SCDC");

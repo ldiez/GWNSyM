@@ -42,6 +42,9 @@ public:
      */
     double GetAzimut(void) const;
 
+    
+    double GetDlResources(void) const;
+    double GetUlResources(void) const;
     /**
      * \brief Free resources at the eNB sector in number of RBs
      * \return <-- The number of RBs

@@ -5,7 +5,8 @@ LOG_REGISTER_MODULE("SquareRandomLocator");
 static const double UserHeight = 1.5;
 
 SquareRandomLocator::SquareRandomLocator(units::m side)
-: m_re(std::random_device()())
+//: m_re(std::random_device()())
+: m_re(0)
 , m_xDist(0, side.RawVal())
 , m_yDist(0, side.RawVal())
 {

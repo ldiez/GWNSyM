@@ -35,6 +35,9 @@ void PrintUlSensed(Usr u, std::ostream& os) {
     auto cells = u->GetLteDev()->GetOrderedCellsUl();
     os << "== " << "UPLINK sensed values\n";
     for (auto& c : cells) {
+        if (c.m_pl.RawVal() > 200) {
+            continue;
+        }
         os << "  eNB " << c.m_enbId << " - " << c.m_cell->GetId()
                 << " [" << c.m_type << "]\tPL " << c.m_pl.RawVal() << " dB\n";
     }
@@ -62,7 +65,9 @@ void PrintUlConn(Usr u, std::ostream& os) {
     auto cells = u->GetLteDev()->GetUlConnList();
     auto info = u->GetLteDev()->GetUlConnInfo();
     os << "== " << "UPLINK connection \n";
-    os << "  " << "#RBs = " << info.m_rbs << " with " << info.m_power.GetDbm() << " dBm\n";
+    os << "  " << "#RBs = " << info.m_rbs << " with "
+            << info.m_power.GetDbm()
+            << " dBm and effective SINR " << info.m_sinr.SinrLog() << " dB\n";
     for (auto& c : cells) {
         os << "  " << "eNB " << c->GetEnb()->GetId() << " " << c->GetId() << "\n";
     }
@@ -155,6 +160,24 @@ void PrintRsrpDist(gnsm::Vec_t<User> us) {
     }
 }
 
+void PrintSinr(gnsm::Vec_t<User> us) {
+    auto folder = "./tests/sinr/";
+    std::ofstream ofs;
+    std::stringstream ss;
+    ss << folder << "sinrLOS.dat";
+    ofs.open(ss.str(), std::ios::app);
+    for (auto& u : us) {
+        auto snr = u->GetLteDev()->GetUlConnInfo().m_sinr.SinrLog();
+        if (snr < -20) {
+            continue;
+        }
+        ofs << (snr > 30 ? 30 : snr) << "\n";
+//        ofs << snr << "\n";
+    }
+    ofs.close();
+
+}
+
 PrintUsers::PrintUsers(PrintType type)
 : m_printType(type) {
 
@@ -170,14 +193,17 @@ PrintUsers::operator()(gnsm::Vec_t<User> us) {
         case PrintType::RSRPDIST:
             PrintRsrpDist(us);
             break;
+        case PrintType::EFF_SINR:
+            PrintSinr(us);
+            break;
         case PrintType::CONSOLE:
         default:
             for (auto& u : us) {
                 PrintHead(u, std::cout);
                 PrintLocation(u, std::cout);
-                PrintDlSensed(u, std::cout);
-                PrintDlConn(u, std::cout);
-                PrintPrevDlConn(u, std::cout);
+                //                PrintDlSensed(u, std::cout);
+                //                PrintDlConn(u, std::cout);
+                //                PrintPrevDlConn(u, std::cout);
                 PrintUlSensed(u, std::cout);
                 PrintUlConn(u, std::cout);
                 PrintPrevUlConn(u, std::cout);

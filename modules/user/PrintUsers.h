@@ -9,7 +9,8 @@ public:
     enum class PrintType : std::uint8_t {
         RSRPMAP = 0,
         RSRPDIST,
-        CONSOLE
+        CONSOLE,
+        EFF_SINR
     };
     PrintUsers(PrintType type);
     void operator()(gnsm::Vec_t<User> us);

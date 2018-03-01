@@ -42,6 +42,7 @@ public:
      * \param interference --> Interference power, Default to 0.0 Watt
      */
     explicit Sinr(Bandwidth band, Power signal, Power interference = Power(units::Watt(0.0)));
+    explicit Sinr(Bandwidth band);
 
     /**
      * \brief Constructor without bandwidth, so that noise is set to 0
@@ -88,6 +89,11 @@ public:
     double InterferenceMw(void) const;
     double InterferenceDbw(void) const;
     double InterferenceDbm(void) const;
+    
+    double NoiseW(void) const;
+    double NoiseMw(void) const;
+    double NoiseDbw(void) const;
+    double NoiseDbm(void) const;
 
     /**
      * \brief Give value of the SINR either in linear or logarithmic scale

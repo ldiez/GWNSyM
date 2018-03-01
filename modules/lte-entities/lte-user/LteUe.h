@@ -58,6 +58,7 @@ public:
     struct UlConn {
         Power m_power;
         double m_rbs;
+        Sinr m_sinr;
     };
 
     explicit LteUe(gnsm::Id_t id);
@@ -79,6 +80,7 @@ public:
      * \return <-- Ordered vector of cells
      */
     SensedValues_t const& GetOrderedCellsDl(void);
+    CellScan const& GetOrderedCellDl(std::uint32_t pos);
 
     /**
      * \brief Give DL information of a given cell
@@ -95,6 +97,7 @@ public:
      * \return <-- List of cells
      */
     UlEstimate_t const& GetOrderedCellsUl(void);
+    UlLosses const& GetOrderedCellUl(std::uint32_t pos);
 
     /**
      * \brief Give UL information of a given cell
@@ -118,7 +121,10 @@ public:
      * \return -- 
      */
     void UlConnect(CellsList_t cl, UlConn ulc);
+    void UlConnect(CellsList_t cl, double nrbs);
+    void UlConnect(CellsList_t cl, double nrbs, Power pow);
     void UlSetPower(Power pow);
+    void UlSetSinr(Sinr sinr);
 
     /**
      * \brief Provide current DL connection list

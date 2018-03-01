@@ -63,9 +63,11 @@ LteRxPower(gnsm::Ptr_t<User> user, gnsm::Ptr_t<LteEnb> ae, AntennaType_e ant,
     BEG;
     auto lteUe_ = user->GetLteDev();
     auto ueRxGain_ = lteUe_->GetConfiguration().GetRxGain();
+    auto ueTxGain_ = lteUe_->GetConfiguration().GetTxGain();
     auto pl_ = ComputePathloss(ae->GetConfiguration().GetType(), user, ae, prop);
     for (auto& cell_ : ae->GetCells()) {
         auto cellTxGain_ = cell_->GetConfiguration().GetTxGain();
+        auto cellRxGain_ = cell_->GetConfiguration().GetRxGain();
         auto antennaAtt_ = ComputeAntenna(cell_, ae->GetPosition(),
                 user->GetPosition(), ant);
         auto rsrp_ = cell_->GetConfiguration().GetTxpowerPerRe();
@@ -73,8 +75,8 @@ LteRxPower(gnsm::Ptr_t<User> user, gnsm::Ptr_t<LteEnb> ae, AntennaType_e ant,
         INFO("PATH LOSS  ", pl_, " dB");
         INFO("Cell gain  ", cellTxGain_, " dB");
         INFO("UE gain  ", ueRxGain_, " dB");
-        auto totalAtt_ = pl_ + CouplingLoss_c + antennaAtt_ -
-                cellTxGain_ - ueRxGain_;
+        auto ulAtt_ = pl_ - ueTxGain_ - cellRxGain_ + CouplingLoss_c + antennaAtt_;
+        auto totalAtt_ = pl_ + CouplingLoss_c + antennaAtt_ - cellTxGain_ - ueRxGain_;
         auto applicablePl_ = totalAtt_;// > MinCL_c ? totalAtt_ : MinCL_c;
         rsrp_.Att(applicablePl_);
         INFO ("Rsrp ", rsrp_.GetDbm(), " dBm")
@@ -87,7 +89,7 @@ LteRxPower(gnsm::Ptr_t<User> user, gnsm::Ptr_t<LteEnb> ae, AntennaType_e ant,
                     ae->GetConfiguration().GetType());
         } else {
             user->GetLteDev()->AddCellInfo(ae->GetId(), cell_, rsrp_, 
-                    applicablePl_, ae->GetConfiguration().GetType());
+                    ulAtt_, ae->GetConfiguration().GetType());
         }
     }
     END;

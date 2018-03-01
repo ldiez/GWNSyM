@@ -56,8 +56,19 @@ LteUe::GetOrderedCellsDl(void) {
         m_orderedDl = true;
     }
     END;
-
     return m_sensedDlPower;
+}
+
+LteUe::CellScan const&
+LteUe::GetOrderedCellDl(std::uint32_t pos) {
+    BEG;
+    MSG_ASSERT(m_sensedDlPower.size() > pos, "Bad cell index")
+    if (!m_orderedDl) {
+        std::sort(m_sensedDlPower.begin(), m_sensedDlPower.end(), SensedSort);
+        m_orderedDl = true;
+    }
+    END;
+    return m_sensedDlPower.at(pos);
 }
 
 LteUe::CellScan
@@ -69,7 +80,7 @@ LteUe::GetCellDl(gnsm::Ptr_t<LteCell> const& c) {
         }
     }
     END;
-    MSG_ASSERT(false, "The cell required does not exist")
+    MSG_ASSERT(false, "Required cell does not exist")
     return {};
 }
 
@@ -82,6 +93,18 @@ LteUe::GetOrderedCellsUl(void) {
     }
     END;
     return m_ulEstimates;
+}
+
+LteUe::UlLosses const&
+LteUe::GetOrderedCellUl(std::uint32_t pos) {
+    BEG;
+    MSG_ASSERT(m_ulEstimates.size() > pos, "Bad cell index")
+    if (!m_orderedUl) {
+        std::sort(m_ulEstimates.begin(), m_ulEstimates.end(), EstimateSort);
+        m_orderedUl = true;
+    }
+    END;
+    return m_ulEstimates.at(pos);
 }
 
 LteUe::UlLosses
@@ -116,8 +139,34 @@ LteUe::UlConnect(CellsList_t cl, UlConn ulc) {
 }
 
 void
+LteUe::UlConnect(CellsList_t cl, double nrbs) {
+    BEG;
+    m_ulCells = cl;
+    m_ulConn.m_rbs = nrbs;
+    END;
+}
+
+void
+LteUe::UlConnect(CellsList_t cl, double nrbs, Power pow) {
+    BEG;
+    m_ulCells = cl;
+    m_ulConn.m_rbs = nrbs;
+    m_ulConn.m_power = pow;
+    END;
+}
+
+void
 LteUe::UlSetPower(Power pow) {
     BEG;
+    m_ulConn.m_power = pow;
+    INFO("Uplink power per PRB ", m_ulConn.m_power.GetMilliWatt(), " mW");
+    END;
+}
+
+void
+LteUe::UlSetSinr(Sinr sinr) {
+    BEG;
+    m_ulConn.m_sinr = sinr;
     END;
 }
 
