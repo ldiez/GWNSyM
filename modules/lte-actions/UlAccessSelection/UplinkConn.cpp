@@ -82,6 +82,10 @@ UplinkConn::SelectPl(gnsm::Ptr_t<User>& user) {
 void
 UplinkConn::SelectCre(gnsm::Ptr_t<User>& user) {
     BEG;
-
+//    auto info = user->GetLteDev()->GetOrderedCellsDl();
+//    auto rsrp = info[0].m_rsrp;
+//    if (info[0].m_type == EnbType::PICO) {
+//        rsrp.Amp(m_picoBias);
+//    }
     END;
 }

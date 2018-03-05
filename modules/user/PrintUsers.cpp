@@ -172,7 +172,7 @@ void PrintSinr(gnsm::Vec_t<User> us) {
             continue;
         }
         ofs << (snr > 30 ? 30 : snr) << "\n";
-//        ofs << snr << "\n";
+        //        ofs << snr << "\n";
     }
     ofs.close();
 
@@ -201,9 +201,9 @@ PrintUsers::operator()(gnsm::Vec_t<User> us) {
             for (auto& u : us) {
                 PrintHead(u, std::cout);
                 PrintLocation(u, std::cout);
-                //                PrintDlSensed(u, std::cout);
-                //                PrintDlConn(u, std::cout);
-                //                PrintPrevDlConn(u, std::cout);
+                PrintDlSensed(u, std::cout);
+                PrintDlConn(u, std::cout);
+                PrintPrevDlConn(u, std::cout);
                 PrintUlSensed(u, std::cout);
                 PrintUlConn(u, std::cout);
                 PrintPrevUlConn(u, std::cout);

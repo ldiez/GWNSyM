@@ -59,21 +59,21 @@ main(void) {
     net.PrintInstances();
     //
     net.Aggregate("ENBS",{"MACRO", "PICO"});
-    net.Initializer<EnbHexLocator>({"MACRO"}, units::m(0), units::m(500), 2);
+    net.Initializer<EnbHexLocator>({"MACRO"}, units::m(0), units::m(500), 1);
     //    net.Initializer<EnbRandLocator>({"PICO"}, units::m(-600), units::m(600));
     net.Action<ServiceAlwaysOn>({"USER::*::GENERIC_SERVICE"});
     net.Action<UserCallUp>({"USER"});
     net.Action<EnbCallUp>({"ENB"});
     // All prepared
-    net.Action<SquareRandomLocator>({"USER"}, units::m(-1000), units::m(1000));
+    net.Action<SquareRandomLocator>({"USER"}, units::m(-100), units::m(100));
     //    net.Action<ParallelLteScan>({"USER", "ENBS"}, AntennaType_e::HV, PropType_e::FULL);
     net.Action<RxPower>({"USER", "ENBS"}, AntennaType_e::HV, PropType_e::FULL);
     net.Action<UplinkConn>({"USER"}, UplinkConn::Mode::RSRP);
     //    net.Action<PrintUsers>({"USER"}, PrintUsers::PrintType::CONSOLE);
-    net.Action<UplinkPowSimple>({"USER"});
+    //    net.Action<UplinkPowSimple>({"USER"});
 
-    net.Action<UplinkEffectiveSinr>({"USER"});
-    net.Action<PrintUsers>({"USER"}, PrintUsers::PrintType::EFF_SINR);
+    //    net.Action<UplinkEffectiveSinr>({"USER"});
+    net.Action<PrintUsers>({"USER"}, PrintUsers::PrintType::CONSOLE);
     // calculate effective SINR
 
     auto start_ = std::chrono::steady_clock::now();
