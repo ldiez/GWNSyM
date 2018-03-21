@@ -23,6 +23,7 @@
 #include "UlAccessSelection/UplinkPowSimple.h"
 #include "UlAccessSelection/UplinkPowCl.h"
 #include "UlAccessSelection/UplinkEffectiveSinr.h"
+#include "UlAccessSelection/UplinkPowerLP.h"
 #include "PosRaster-2d.h"
 #include "lte-ae/EnbHexLocator.h"
 #include "lte-ae/EnbRandLocator.h"
@@ -45,6 +46,7 @@ main(void) {
         //        LOG_SET_LEVEL("UplinkPowSimple", LogLevel::INFO);
         //        LOG_SET_LEVEL("UplinkPowCl", LogLevel::INFO);
         //        LOG_SET_LEVEL("UplinkEffectiveSinr", LogLevel::INFO);
+        LOG_SET_LEVEL("UplinkPowerLP", LogLevel::ALL);
     }
     {//==|----> create network types
         net.Type<User, UserConf>("USER");
@@ -95,13 +97,14 @@ main(void) {
         //    net.Action<PrintUsers>({"USER"}, PrintUsers::PrintType::CONSOLE);
         //    net.Action<UplinkPowSimple>({"USER"}, UplinkPowSimple::PcMode::OlPc);
         //    net.Action<UplinkPowSimple>({"USER"}, UplinkPowSimple::PcMode::NoPc);
-        net.Action<UplinkPowCl>({"USER"});
+        //        net.Action<UplinkPowCl>({"USER"});
+        net.Action<UplinkPowerLP>({"USER"});
     }
     {//==|----> define interference level according to previous snapshot!!
-        net.Action<UplinkEffectiveSinr>({"USER"});
+        //        net.Action<UplinkEffectiveSinr>({"USER"});
     }
     {//==|----> get results
-        net.Action<PrintUsers>({"USER"}, PrintUsers::PrintType::CLOSED_LOOP);
+        //        net.Action<PrintUsers>({"USER"}, PrintUsers::PrintType::CLOSED_LOOP);
     }
     auto start = Now();
     net.Run();

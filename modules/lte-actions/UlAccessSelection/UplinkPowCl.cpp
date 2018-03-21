@@ -1,8 +1,6 @@
 #include "UplinkPowCl.h"
 #include "Log.h"
-#include "User.h"
-#include "lte-ae/LteEnb.h"
-
+#include "UplinkUtils.h"
 
 LOG_REGISTER_MODULE("UplinkPowCl");
 
@@ -29,35 +27,12 @@ inClConnected(gnsm::Ptr_t<User> u) {
 void
 ClPowerControl(gnsm::Ptr_t<User> u) {
     BEG;
-    auto p0 = Power(units::Watt(NoisePowerWatt(LTE::RbBw_s.RawVal()*1e3)));
-    auto noise = p0;
-    auto inter = u->GetLteDev()->GetPrevUlInterf();
+    auto cell = GetServCell(u);
+    auto pl = u->GetLteDev()->GetCellUl(cell).m_pl;
     auto snrTh = u->GetLteDev()->GetConfiguration().UlSinrTh();
     auto alpha = u->GetLteDev()->GetConfiguration().GetAlpha();
-    auto nf = u->GetLteDev()->GetConfiguration().GetNoiseFigure();
-    p0.Amp(nf);
-    p0 += inter; // noise plus interference
-    INFO("==================");
-    INFO("USER ", u->GetId());
-    INFO("N+I = ", p0.GetDbm(), " dBm");
-    INFO("N+I diff = ", p0.GetDbm() - noise.GetDbm(), " dB");
-    p0.Amp(snrTh);
-    auto ulConList = u->GetLteDev()->GetUlConnList();
-    auto cell = ulConList.at(0);
-    auto pl = u->GetLteDev()->GetCellUl(cell).m_pl;
-    auto p = p0.Amp(units::dB(alpha * pl.RawVal()));
-    INFO("Transmission power per PRB ", p.GetDbm(), "dBm");
-    {// second approach
-//        auto prevPow = u->GetLteDev()->GetPrevUlConn().m_power;
-//        auto prevSinr = u->GetLteDev()->GetPrevUlConn().m_sinr;
-//        INFO("+-+-Previous interference = ", prevSinr.InterferenceDbm(), " dBm");
-//        auto deltaSinr = snrTh.RawVal() - prevSinr.SinrLog();
-//        INFO("+-+-Previous SINR = ", prevSinr.SinrLog(), " dB");
-//        INFO("+-+-Target SINR = ", snrTh.RawVal(), " dB");
-//        INFO("+-+-\\Delta SINR = ", deltaSinr, " dB");
-//        INFO("+-+-Previous power = ", prevPow.GetDbm(), " dBm");
-//        INFO("+-+-New power = ", prevPow.Amp(units::dB(deltaSinr)).GetDbm(), " dBm");
-    }
+    auto p = GetNoise(u, cell) + u->GetLteDev()->GetPrevUlInterf(); // noise plus interference
+    p.Amp(snrTh).Amp(units::dB(alpha * pl.RawVal()));
     u->GetLteDev()->UlSetPower(p);
     END;
 }

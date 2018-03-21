@@ -35,7 +35,7 @@ def configure (ctx) :
 	ctx.env.LIBPATH_MYLIB = ['/usr/local/lib', '/usr/lib']
 	ctx.env.INCLUDES_MYLIB  = ['/usr/local/include', '/usr/include']
 	ctx.env.append_value('LINKFLAGS', ['-ldl', '-lpthread', '-lboost_filesystem',\
-                                       '-lboost_system', '-lpython2.7'])
+                                       '-lboost_system', '-lpython2.7', '-lglpk', '-lm'])
 	ctx.load('compiler_cc compiler_cxx')
 	ctx.env.CCFLAGS = ['-Os', '-Werror', '-std=c1y']
 	ctx.env.CXXFLAGS = ['-Os', '-Werror', '-std=c++1y']
@@ -46,7 +46,7 @@ def configure (ctx) :
 	ctx.env.LIBPATH_MYLIB = ['/usr/local/lib', '/usr/lib']
 	ctx.env.INCLUDES_MYLIB  = ['/usr/local/include', '/usr/include']
 	ctx.env.append_value('LINKFLAGS', ['-ldl', '-lpthread', '-lboost_filesystem',\
-                                       '-lboost_system', '-lpython2.7'])
+                                       '-lboost_system', '-lpython2.7', '-lglpk', '-lm'])
 	ctx.load('compiler_cc compiler_cxx')
 	ctx.env.CCFLAGS = ['-g', '-Wall', '-std=c1y']
 	ctx.env.CXXFLAGS = ['-g', '-Wall', '-std=c++1y']
