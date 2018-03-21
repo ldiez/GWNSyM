@@ -25,14 +25,11 @@ OnOff::operator()(gnsm::Ptr_t<Service> serv)
         auto check_ = m_track.insert(ServicesTrack_t::value_type{serv, 0u});
         MSG_ASSERT (check_.second, "Bad service insertion");
         DoUpdate(check_.first);
-        
     }
     else
     {
         DoUpdate(iter_);
     }
-
-
     END;
 }
 

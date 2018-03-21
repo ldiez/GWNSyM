@@ -77,13 +77,13 @@ LteCell::GetAzimut(void) const {
     return m_azimut;
 }
 
-double 
+double
 LteCell::GetDlResources(void) const {
     BEGEND;
     return m_conf->GetCapacity();
 }
 
-double 
+double
 LteCell::GetUlResources(void) const {
     BEGEND;
     return m_conf->GetCapacity();

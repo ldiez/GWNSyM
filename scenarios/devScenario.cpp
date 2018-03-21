@@ -1,23 +1,27 @@
 #include <cstdlib>
-#include <chrono>
+
 
 
 // Common headers
 #include "System.h"
 #include "Configurer.h"
+#include "Chrono.h"
 
 // entities
 #include "lte-ae/LteEnb.h"
 #include "Cluster/LteCluster.h"
 #include "User.h"
 
+
 #include "RxPower.h"
 #include "ParallelLteScan.h"
 #include "PrintUsers.h"
 #include "SquareRandomLocator.h"
+#include "StaticLocator.h"
 #include "CallUp.h"
 #include "UlAccessSelection/UplinkConn.h"
 #include "UlAccessSelection/UplinkPowSimple.h"
+#include "UlAccessSelection/UplinkPowCl.h"
 #include "UlAccessSelection/UplinkEffectiveSinr.h"
 #include "PosRaster-2d.h"
 #include "lte-ae/EnbHexLocator.h"
@@ -33,52 +37,74 @@
 int
 main(void) {
     gnsm::System net;
-
-    //    LOG_SET_ALL_LEVEL(LogLevel::ALL)
-    //    LOG_SET_LEVEL("PrintUsers", LogLevel::WARNING);
-    //    LOG_SET_LEVEL("UplinkConn", LogLevel::INFO);
-    //    LOG_SET_LEVEL("RxPower", LogLevel::INFO)
-    //    LOG_SET_LEVEL("UplinkPowSimple", LogLevel::INFO)
-    //    LOG_SET_LEVEL("UplinkEffectiveSinr", LogLevel::INFO)
-    //
-    net.Type<User, UserConf>("USER");
-    net.Type<LteUe, LteUeConf>("LTE_UE", USERS_CONF);
-    //
-    net.Type<LteCell, LteCellConf>("MACRO_CELL", EnbType::MACRO, ENBS_CONF);
-    net.Type<LteEnb, LteEnbConf>("MACRO", EnbType::MACRO, ENBS_CONF);
-    net.Type<LteCell, LteCellConf>("PICO_CELL", EnbType::PICO, ENBS_CONF);
-    net.Type<LteEnb, LteEnbConf>("PICO", EnbType::PICO, ENBS_CONF);
-    net.Type<Service, ServConf>("GENERIC_SERVICE", ServType::GENERIC, USERS_CONF);
-    // Global deployment
-    net.SetTreeBase("USER",{"USER", "NUMBER"});
-    net.SetTreeBase("MACRO",{"MACRO", "NUMBER"});
-    //    net.SetTreeBase("PICO",{"PICO", "NUMBER"});
-    net.SetConfig<gnsm::Configurer>(GLOB_CONF);
-    //
-    net.Deploy();
-    net.PrintInstances();
-    //
-    net.Aggregate("ENBS",{"MACRO", "PICO"});
-    net.Initializer<EnbHexLocator>({"MACRO"}, units::m(0), units::m(500), 1);
-    //    net.Initializer<EnbRandLocator>({"PICO"}, units::m(-600), units::m(600));
-    net.Action<ServiceAlwaysOn>({"USER::*::GENERIC_SERVICE"});
-    net.Action<UserCallUp>({"USER"});
-    net.Action<EnbCallUp>({"ENB"});
-    // All prepared
-    net.Action<SquareRandomLocator>({"USER"}, units::m(-100), units::m(100));
-    //    net.Action<ParallelLteScan>({"USER", "ENBS"}, AntennaType_e::HV, PropType_e::FULL);
-    net.Action<RxPower>({"USER", "ENBS"}, AntennaType_e::HV, PropType_e::FULL);
-    net.Action<UplinkConn>({"USER"}, UplinkConn::Mode::RSRP);
-    //    net.Action<PrintUsers>({"USER"}, PrintUsers::PrintType::CONSOLE);
-    //    net.Action<UplinkPowSimple>({"USER"});
-
-    //    net.Action<UplinkEffectiveSinr>({"USER"});
-    net.Action<PrintUsers>({"USER"}, PrintUsers::PrintType::CONSOLE);
-    // calculate effective SINR
-
-    auto start_ = std::chrono::steady_clock::now();
+    {//==|----> define logging levels
+        //    LOG_SET_ALL_LEVEL(LogLevel::ALL)
+        //        LOG_SET_LEVEL("LteCell", LogLevel::INFO);
+        //        LOG_SET_LEVEL("UplinkConn", LogLevel::WARNING);
+        //    LOG_SET_LEVEL("RxPower", LogLevel::INFO)
+        //        LOG_SET_LEVEL("UplinkPowSimple", LogLevel::INFO);
+        //        LOG_SET_LEVEL("UplinkPowCl", LogLevel::INFO);
+        //        LOG_SET_LEVEL("UplinkEffectiveSinr", LogLevel::INFO);
+    }
+    {//==|----> create network types
+        net.Type<User, UserConf>("USER");
+        net.Type<LteUe, LteUeConf>("LTE_UE", USERS_CONF);
+        //
+        net.Type<LteCell, LteCellConf>("MACRO_CELL", EnbType::MACRO, ENBS_CONF);
+        net.Type<LteEnb, LteEnbConf>("MACRO", EnbType::MACRO, ENBS_CONF);
+        net.Type<LteCell, LteCellConf>("PICO_CELL", EnbType::PICO, ENBS_CONF);
+        net.Type<LteEnb, LteEnbConf>("PICO", EnbType::PICO, ENBS_CONF);
+        net.Type<Service, ServConf>("GENERIC_SERVICE", ServType::GENERIC, USERS_CONF);
+    }
+    {//==|----> global deployment
+        net.SetTreeBase("USER",{"USER", "NUMBER"});
+        net.SetTreeBase("MACRO",{"MACRO", "NUMBER"});
+        net.SetTreeBase("PICO",{"PICO", "NUMBER"});
+    }
+    {//==|----> instantiaton
+        net.SetConfig<gnsm::Configurer>(GLOB_CONF);
+        net.Deploy();
+        //    net.PrintInstances(gnsm::ts::NAME::FULL);
+    }
+    {//==|----> aggregate type
+        net.Aggregate("ENBS",{"MACRO", "PICO"});
+    }
+    {//==|----> locate the eNBs only at start
+        net.Initializer<EnbHexLocator>({"MACRO"}, units::m(0), units::m(500), 2);
+        net.Initializer<EnbRandLocator>({"PICO"}, units::m(-400), units::m(400));
+    }
+    {//==|----> set services pattern
+        net.Action<ServiceAlwaysOn>({"USER::*::GENERIC_SERVICE"});
+    }
+    {//==|----> set valid state at the begining of the snapshot
+        net.Action<UserCallUp>({"USER"});
+        net.Action<EnbCallUp>({"ENBS"});
+    }
+    {//==|----> locate the users
+        net.Action<SquareRandomLocator>({"USER"}, units::m(-600), units::m(600));
+        //        net.Action<StaticLocator>({"USER"});
+    }
+    {//==|----> scan environment
+        //    net.Action<ParallelLteScan>({"USER", "ENBS"}, AntennaType_e::HV, PropType_e::FULL);
+        net.Action<RxPower>({"USER", "ENBS"}, AntennaType_e::HONLY, PropType_e::LOS);
+    }
+    {//==|----> access selection
+        net.Action<UplinkConn>({"USER"}, UplinkConn::Mode::CRE, units::dB(6.0), units::dB(3.0), units::dB(0.0));
+    }
+    {//==|----> calculate transmission power
+        //    net.Action<PrintUsers>({"USER"}, PrintUsers::PrintType::CONSOLE);
+        //    net.Action<UplinkPowSimple>({"USER"}, UplinkPowSimple::PcMode::OlPc);
+        //    net.Action<UplinkPowSimple>({"USER"}, UplinkPowSimple::PcMode::NoPc);
+        net.Action<UplinkPowCl>({"USER"});
+    }
+    {//==|----> define interference level according to previous snapshot!!
+        net.Action<UplinkEffectiveSinr>({"USER"});
+    }
+    {//==|----> get results
+        net.Action<PrintUsers>({"USER"}, PrintUsers::PrintType::CLOSED_LOOP);
+    }
+    auto start = Now();
     net.Run();
-    std::cout << std::chrono::duration_cast <std::chrono::milliseconds>
-            (std::chrono::steady_clock::now() - start_).count() << "ms" << std::endl;
+    UINFO(Time2ms(Now() - start), " ms");
     return 0;
 }

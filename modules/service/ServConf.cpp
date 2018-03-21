@@ -12,10 +12,10 @@ ServConf::ServConf(ServType st, std::string const& fileName)
     ConfigXml conf_(fileName);
 
     auto strServType_ = ToStr(m_type);
-    m_dlCapacity = ParseTraffic(conf_.GetAttr<>("SERVICES", "units"),
-                                conf_.Get<double>("SERVICES." + strServType_ + ".DL"));
-    m_ulCapacity = ParseTraffic(conf_.GetAttr<>("SERVICES", "units"),
-                                conf_.Get<double>("SERVICES." + strServType_ + ".UL"));
+    m_dlCapacity = ParseTraffic(conf_.GetAttr<>("USER.SERVICES", "units"),
+                                conf_.Get<double>("USER.SERVICES." + strServType_ + ".DL"));
+    m_ulCapacity = ParseTraffic(conf_.GetAttr<>("USER.SERVICES", "units"),
+                                conf_.Get<double>("USER.SERVICES." + strServType_ + ".UL"));
 
     INFO("Service " + strServType_ + "configured with DL demand of "
          , m_dlCapacity.GetKbps(), "kbps and "

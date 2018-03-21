@@ -12,13 +12,14 @@ public:
         NoPc,
         OlPc
     };
-    
-    UplinkPowSimple(PcMode pcm = PcMode::NoPc, double alpha = 0);
+
+    UplinkPowSimple(PcMode pcm = PcMode::NoPc);
     void operator()(gnsm::Ptr_t<User> u);
 private:
-
-    void NoPowerControl(gnsm::Ptr_t<User> u);
     PcMode m_pcMode;
 };
+
+void NoPowerControl(gnsm::Ptr_t<User> u);
+void OlPowerControl(gnsm::Ptr_t<User> u);
 
 #endif /* ULNOPC_H */

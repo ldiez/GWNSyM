@@ -85,6 +85,7 @@ public:
     double SignalDbw(void) const;
     double SignalDbm(void) const;
 
+    Power Interference(void) const;
     double InterferenceW(void) const;
     double InterferenceMw(void) const;
     double InterferenceDbw(void) const;

@@ -161,6 +161,8 @@ public:
      * \return <-- List of cells
      */
     CellsList_t const& GetPrevUlConnList(void) const;
+    Power const& GetPrevUlInterf(void) const;
+    UlConn const& GetPrevUlConn(void) const;
 
     /**
      * \brief Remove the list of cells of the connection
@@ -191,6 +193,9 @@ private:
      */
     SensedValues_t m_sensedDlPower;
     UlEstimate_t m_ulEstimates;
+    
+    Power m_prevUlInterf;
+    UlConn m_prevUlConn;
 
     gnsm::Id_t m_id;
     const LteUeConf* m_conf;
@@ -198,6 +203,9 @@ private:
 
 Sinr
 LoadBasedSinr(LteUe::SensedValues_t const& cells, LteUe::CellScan cell, double load);
+
+bool
+isConnected(gnsm::Ptr_t<LteUe> ue);
 
 #endif /* LTEUE_H */
 

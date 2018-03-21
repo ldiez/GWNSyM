@@ -13,6 +13,18 @@ UplinkConn::UplinkConn(Mode m, units::dB picoCre,
     BEGEND;
 }
 
+void Assign(gnsm::Ptr_t<LteCell> c, gnsm::Ptr_t<User> u, double nrbs) {
+    if (c->AddUlUser(u->GetId(), nrbs)) {
+        u->GetLteDev()->UlConnect({c}, nrbs);
+        u->GetLteDev()->DlConnect({c},
+        {
+            Traffic(u->GetConnectionManager()->DlDemand()), nrbs
+        });
+    } else {
+        WARN ("Cell ", c->GetId(), " is full for user ", u->GetId());
+    }
+}
+
 void
 UplinkConn::operator()(gnsm::Vec_t<User> users) {
     BEG;
@@ -51,15 +63,12 @@ void
 UplinkConn::SelectRsrp(gnsm::Ptr_t<User>& user) {
     BEG;
     auto nrbs_ = Nrbs(user);
+    if (nrbs_ == 0) { // no traffic
+        return;
+    }
     auto cellInfo_ = user->GetLteDev()->GetOrderedCellDl(0);
     auto cell_ = cellInfo_.m_cell;
-    if (true) {//cell_->AddUlUser(user->GetId(), nrbs_)) {
-        user->GetLteDev()->UlConnect({cell_}, nrbs_);
-        user->GetLteDev()->DlConnect({cell_},
-        {
-            Traffic(user->GetConnectionManager()->DlDemand()), nrbs_
-        });
-    }
+    Assign(cell_, user, nrbs_);
     END;
 }
 
@@ -67,25 +76,43 @@ void
 UplinkConn::SelectPl(gnsm::Ptr_t<User>& user) {
     BEG;
     auto nrbs_ = Nrbs(user);
+    if (nrbs_ == 0) { // no traffic
+        return;
+    }
     auto cellInfo_ = user->GetLteDev()->GetOrderedCellUl(0);
     auto cell_ = cellInfo_.m_cell;
-    if (true) {//cell_->AddUlUser(user->GetId(), nrbs_)) {
-        user->GetLteDev()->UlConnect({cell_}, nrbs_);
-        user->GetLteDev()->DlConnect({cell_},
-        {
-            Traffic(user->GetConnectionManager()->DlDemand()), nrbs_
-        });
-    }
+    Assign(cell_, user, nrbs_);
     END;
 }
 
 void
 UplinkConn::SelectCre(gnsm::Ptr_t<User>& user) {
     BEG;
-//    auto info = user->GetLteDev()->GetOrderedCellsDl();
-//    auto rsrp = info[0].m_rsrp;
-//    if (info[0].m_type == EnbType::PICO) {
-//        rsrp.Amp(m_picoBias);
-//    }
+    auto nrbs_ = Nrbs(user);
+    if (nrbs_ == 0) { // no traffic
+        return;
+    }
+    auto info = user->GetLteDev()->GetOrderedCellsDl();
+    std::map<Power, gnsm::Ptr_t < LteCell>, std::greater < Power>> auxOrder;
+
+    for (auto& item : info) {
+        auto rsrp = item.m_rsrp;
+        switch (item.m_type) {
+            case EnbType::PICO:
+                rsrp.Amp(m_picoBias);
+                break;
+            case EnbType::MICRO:
+                rsrp.Amp(m_microbias);
+                break;
+            case EnbType::MACRO:
+            default:
+                rsrp.Amp(m_macroBias);
+                break;
+        }
+        auxOrder.insert({rsrp, item.m_cell});
+    }
+    
+    auto cell_ = auxOrder.begin()->second;
+    Assign(cell_, user, nrbs_);
     END;
 }

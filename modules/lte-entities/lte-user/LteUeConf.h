@@ -38,12 +38,18 @@ public:
      */
     Power GetPmax ( void ) const;
     
+    /**
+     * \brief Get compensation pathloss factor
+     */
+    double GetAlpha ( void ) const;
+    
 private:
     units::dB m_rxGain;
     units::dB m_txGain;
     units::dB m_noiseFigure;
     units::dB m_ulSinrTh;
     Power m_pMax;
+    double m_alpha;
 
 };
 #endif	/* LTEUECONF_H */

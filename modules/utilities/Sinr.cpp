@@ -191,6 +191,12 @@ Sinr::SignalDbm(void) const {
     return m_signal.GetDbm();
 }
 
+Power 
+Sinr::Interference(void) const {
+    BEGEND;
+    return m_interference;
+}
+
 double
 Sinr::InterferenceW(void) const {
     BEGEND;

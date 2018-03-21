@@ -175,12 +175,54 @@ void PrintSinr(gnsm::Vec_t<User> us) {
         //        ofs << snr << "\n";
     }
     ofs.close();
+}
 
+void PrintTxPower(gnsm::Vec_t<User> us) {
+    auto folder = "./tests/ulTxpower/";
+    std::ofstream ofs;
+    std::stringstream ss;
+    //    ss << folder << "olTc_"
+    //            << std::setw(2) << std::setfill('0') 
+    //            << int(10*us.at(0)->GetLteDev()->GetConfiguration().GetAlpha()) << ".dat";
+    ss << folder << "noTc.dat";
+    ofs.open(ss.str(), std::ios::out);
+    for (auto& u : us) {
+        auto connCell = u->GetLteDev()->GetUlConnList().at(0);
+        auto pow = u->GetLteDev()->GetUlConnInfo().m_power.GetDbm();
+        auto enbPos = connCell->GetEnb()->GetPosition();
+        auto uePos = u->GetPosition();
+        auto pl = u->GetLteDev()->GetCellUl(connCell).m_pl;
+        ofs << pow << "\t" << pl.m_val << "\t" << GetPlanarDistance(enbPos, uePos).GetM() << "\n";
+    }
+    ofs.close();
+}
+
+void PrintClosedLoop(gnsm::Vec_t<User> us, std::uint32_t iter) {
+    auto folder = "./tests/cl/";
+    std::ofstream ofs;
+    std::stringstream ss;
+    ss << folder << "cl_" << std::setw(4) << std::setfill('0') << iter << ".dat";
+    ofs.open(ss.str(), std::ios::out);
+    for (auto& u : us) {
+        auto ulConn = u->GetLteDev()->GetUlConnInfo();
+        ofs << ulConn.m_power.GetDbm() << "\t"
+                << ulConn.m_sinr.SinrLog() << "\t"
+                << ulConn.m_sinr.InterferenceDbm() << "\n";
+    }
+    ofs.close();
 }
 
 PrintUsers::PrintUsers(PrintType type)
 : m_printType(type) {
 
+}
+
+void
+PrintUsers::SetIteration(std::uint32_t iter)
+{
+    BEG;
+    m_currIter = iter;
+    END;
 }
 
 void
@@ -195,6 +237,19 @@ PrintUsers::operator()(gnsm::Vec_t<User> us) {
             break;
         case PrintType::EFF_SINR:
             PrintSinr(us);
+            break;
+        case PrintType::UL_TXPOWER:
+            PrintTxPower(us);
+            break;
+        case PrintType::CONSOLE_UL:
+            for (auto& u : us) {
+                PrintHead(u, std::cout);
+                PrintUlConn(u, std::cout);
+                PrintPrevUlConn(u, std::cout);
+            }
+            break;
+        case PrintType::CLOSED_LOOP:
+            PrintClosedLoop(us, m_currIter);
             break;
         case PrintType::CONSOLE:
         default:

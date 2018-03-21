@@ -20,6 +20,7 @@ EstimateSort(LteUe::UlLosses const& left, LteUe::UlLosses const& right) {
 LteUe::LteUe(gnsm::Id_t id)
 : m_orderedDl(false)
 , m_orderedUl(false)
+, m_prevUlInterf(units::Watt(0.0))
 , m_id(id) {
     BEG END;
 }
@@ -159,7 +160,6 @@ void
 LteUe::UlSetPower(Power pow) {
     BEG;
     m_ulConn.m_power = pow;
-    INFO("Uplink power per PRB ", m_ulConn.m_power.GetMilliWatt(), " mW");
     END;
 }
 
@@ -206,6 +206,18 @@ LteUe::GetPrevUlConnList(void) const {
     return m_prevUlCells;
 }
 
+Power const&
+LteUe::GetPrevUlInterf(void) const {
+    BEGEND;
+    return m_prevUlInterf;
+}
+
+LteUe::UlConn const&
+LteUe::GetPrevUlConn(void) const {
+    BEGEND;
+    return m_prevUlConn;
+}
+
 void
 LteUe::CallUp(void) {
     BEG;
@@ -216,6 +228,8 @@ LteUe::CallUp(void) {
     m_dlCells.clear();
     m_ulCells.clear();
     m_dlConn = DlConn();
+    m_prevUlInterf = m_ulConn.m_sinr.Interference();
+    m_prevUlConn = m_ulConn;
     m_ulConn = UlConn();
     END;
 }
@@ -237,4 +251,10 @@ LoadBasedSinr(LteUe::SensedValues_t const& cells, LteUe::CellScan cellInfo, doub
     }
     INFO("SINR ", s.SinrLog(), " dB");
     return s;
+}
+
+bool
+isConnected(gnsm::Ptr_t<LteUe> ue) {
+    auto servCells = ue->GetUlConnList();
+    return (servCells.size() >= 1);
 }

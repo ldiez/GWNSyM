@@ -12,7 +12,6 @@
 struct UserCallUp {
 
     void SetIteration(std::uint32_t it) {
-        std::cout << "Iteration " << it << std::endl;
     }
 
     void operator()(gnsm::Ptr_t<User> user) {
