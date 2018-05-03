@@ -45,8 +45,8 @@ main(void) {
         //    LOG_SET_LEVEL("RxPower", LogLevel::INFO)
         //        LOG_SET_LEVEL("UplinkPowSimple", LogLevel::INFO);
         //        LOG_SET_LEVEL("UplinkPowCl", LogLevel::INFO);
-        //        LOG_SET_LEVEL("UplinkEffectiveSinr", LogLevel::INFO);
-        LOG_SET_LEVEL("UplinkPowerLP", LogLevel::ALL);
+        LOG_SET_LEVEL("UplinkEffectiveSinr", LogLevel::INFO);
+        LOG_SET_LEVEL("UplinkPowerLP", LogLevel::DEBUG);
     }
     {//==|----> create network types
         net.Type<User, UserConf>("USER");
@@ -83,8 +83,8 @@ main(void) {
         net.Action<EnbCallUp>({"ENBS"});
     }
     {//==|----> locate the users
-        net.Action<SquareRandomLocator>({"USER"}, units::m(-600), units::m(600));
-        //        net.Action<StaticLocator>({"USER"});
+        //        net.Action<SquareRandomLocator>({"USER"}, units::m(-600), units::m(600));
+        net.Action<StaticLocator>({"USER"});
     }
     {//==|----> scan environment
         //    net.Action<ParallelLteScan>({"USER", "ENBS"}, AntennaType_e::HV, PropType_e::FULL);
@@ -101,10 +101,10 @@ main(void) {
         net.Action<UplinkPowerLP>({"USER"});
     }
     {//==|----> define interference level according to previous snapshot!!
-        //        net.Action<UplinkEffectiveSinr>({"USER"});
+        net.Action<UplinkEffectiveSinr>({"USER"});
     }
     {//==|----> get results
-        //        net.Action<PrintUsers>({"USER"}, PrintUsers::PrintType::CLOSED_LOOP);
+        net.Action<PrintUsers>({"USER"}, PrintUsers::PrintType::EFF_SINR);
     }
     auto start = Now();
     net.Run();

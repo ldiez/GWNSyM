@@ -18,7 +18,7 @@ UplinkEffectiveSinr::operator()(gnsm::Vec_t<User> us) {
         }
         auto servCell = GetServCell(u);
         Sinr snr(Bandwidth(LTE::RbBw_s));
-        auto txPower = u->GetLteDev()->GetUlConnInfo().m_power;
+        auto txPower = GetConnPow(u);
         txPower.Att(GetPl(u, servCell));
         snr.AddSignal(txPower);
         for (auto& ui : us) {
@@ -27,7 +27,12 @@ UplinkEffectiveSinr::operator()(gnsm::Vec_t<User> us) {
             }
             snr.AddInterference(CalculateInterference(u, ui));
         }
-        INFO("Serving User ", u->GetId(), " with SIRN ", snr.SinrLog(), " dB");
+        
+        INFO("+++ Serving User ", u->GetId(), " with SIRN ", snr.SinrLog(), " dB");
+//        INFO("Power = ", GetConnPow(u).GetMilliWatt(), " mW"); 
+//        INFO("L = ", units::To<units::linear>::Do(GetPl(u, servCell)).RawVal());
+//        INFO("Interf = ", snr.InterferenceMw(), " mW");
+//        INFO("Noise = ", snr.NoiseMw(), " mW");
         u->GetLteDev()->UlSetSinr(snr);
     }
     END;

@@ -21,6 +21,7 @@ namespace units {
     using dBHz = LogVal<LogPref::dB>;
 
     // power units
+    using linear = LinVal<LinPref::Ref>;
     using Watt = LinVal<LinPref::Ref>;
     using MilliWatt = LinVal<LinPref::Milli>;
     using dBW = LogVal<LogPref::dB>;

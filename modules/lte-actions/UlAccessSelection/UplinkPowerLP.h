@@ -3,6 +3,7 @@
 
 #include "CoreUtils.h"
 #include <glpk.h> 
+#include <map>
 class User;
 /**
  * \problem
@@ -20,15 +21,29 @@ public:
     ~UplinkPowerLP();
     void operator()(gnsm::Vec_t<User> users);
 private:
+    void Clear ();
+    void FilterUsers (gnsm::Vec_t<User> users);
+    void Map2problem ();
+    
     double GetA (gnsm::Ptr_t<User> u) const;
     double GetB (gnsm::Ptr_t<User> us, gnsm::Ptr_t<User> ui) const;
     
     void AddRows(void);
     void AddCols(void);
     void SetCoefs(void);
+    void Solve (void);
+    void SetPower (void);
+    
+    void Print (void);
     glp_prob* m_lp;
     
-    std::uint32_t m_nVars;
+    gnsm::Vec_t<User> m_targetUsers;
+    
+    std::vector<double> m_vecAs;
+    std::vector<double> m_coefs;
+    std::vector<double> m_max;
+    std::vector<double> m_sol;
+    std::vector<std::vector<double>> m_matBs;
 };
 
 #endif /* UPLINKPOWERLP_H */

@@ -65,7 +65,7 @@ CalculateInterference(gnsm::Ptr_t<User> uServ, gnsm::Ptr_t<User> uInt) {
     return powInt;
 }
 
-inline bool 
+inline bool
 AreInterfering(gnsm::Ptr_t<User> u1, gnsm::Ptr_t<User> u2) {
     if (u1 == u2) {
         return false;
@@ -73,9 +73,10 @@ AreInterfering(gnsm::Ptr_t<User> u1, gnsm::Ptr_t<User> u2) {
     if (!isConnected(u1->GetLteDev()) or !isConnected(u2->GetLteDev())) {
         return false;
     }
-    auto c1 = GetServCell(u1);
-    auto c2 = GetServCell(u2);
-    return (!c1->HasSameEnb(c2));
+    return true;
+    //    auto c1 = GetServCell(u1);
+    //    auto c2 = GetServCell(u2);
+    //    return (!c1->HasSameEnb(c2));
 }
 
 #endif /* UPLINKUTILS_H */

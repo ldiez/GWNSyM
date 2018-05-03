@@ -164,8 +164,8 @@ void PrintSinr(gnsm::Vec_t<User> us) {
     auto folder = "./tests/sinr/";
     std::ofstream ofs;
     std::stringstream ss;
-    ss << folder << "sinrLOS.dat";
-    ofs.open(ss.str(), std::ios::app);
+    ss << folder << "sinr.dat";
+    ofs.open(ss.str(), std::ios::out);
     for (auto& u : us) {
         auto snr = u->GetLteDev()->GetUlConnInfo().m_sinr.SinrLog();
         if (snr < -20) {
