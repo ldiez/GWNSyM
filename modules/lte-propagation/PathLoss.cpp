@@ -7,7 +7,7 @@
 
 LOG_REGISTER_MODULE("PathLoss");
 
-static constexpr bool Shadow_s = false;
+static constexpr bool Shadow_s = true;
 
 namespace LTE {
 

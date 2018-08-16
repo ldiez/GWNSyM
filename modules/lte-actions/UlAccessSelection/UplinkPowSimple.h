@@ -15,6 +15,7 @@ public:
 
     UplinkPowSimple(PcMode pcm = PcMode::NoPc);
     void operator()(gnsm::Ptr_t<User> u);
+    void SetIteration (std::uint32_t iter);
 private:
     PcMode m_pcMode;
 };

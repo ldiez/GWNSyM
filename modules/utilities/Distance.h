@@ -3,9 +3,6 @@
 
 #include "CommonUnits.h"
 
-
-
-
 /**
  * \ingroup core-utils
  * \brief Class to handle distances

@@ -21,10 +21,12 @@ void
 LteEnb::Aggregate ( std::string const& name, gnsm::ts::Wrapper_t o )
 {
     BEG;
+    INFO ("eNB ", m_id, " Aggregating ", name)
     if ( name ==  m_conf->GetCellSetName())
     {
         o.Unwrap(m_cells);
     }
+    INFO ("eNB ", m_id, " number of ", name, " = ", m_cells.size());
 
     auto i_ = 0u;
     for ( auto& item_ : m_cells )

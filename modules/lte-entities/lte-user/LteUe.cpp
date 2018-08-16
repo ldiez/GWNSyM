@@ -241,7 +241,6 @@ LoadBasedSinr(LteUe::SensedValues_t const& cells, LteUe::CellScan cellInfo, doub
 
     auto servEnb = cellInfo.m_cell->GetEnb();
     Sinr s(Bandwidth(LTE::RbBw_s), cellInfo.m_rsrp);
-    //auto servLoad = cell->GetConfiguration().GetCapacity();
     for (auto& item : cells) {
         if (item.m_cell == cellInfo.m_cell or servEnb == item.m_cell->GetEnb()) {
             continue;

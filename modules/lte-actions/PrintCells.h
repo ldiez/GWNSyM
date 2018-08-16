@@ -6,38 +6,22 @@
 class PrintCells
 {
 public:
-    PrintCells()
+
+    enum class PrintType : std::uint8_t
     {
-    }
+        POSITION = 0,
+    };
 
-    void operator()(gnsm::Vec_t<LteEnb> macro, gnsm::Vec_t<LteEnb> pico)
-    {
-        // open a file, print coordinates
+    PrintCells(PrintType type, std::string const& head = "",
+               std::string const& tail = "");
+    void operator()(gnsm::Vec_t<LteEnb> layer);
 
-        std::ofstream ofs_;
-        ofs_.open("MACRO.dat", std::ios::out);
 
-        if (ofs_.is_open())
-        {
-            for (auto& item_ : macro)
-            {
-                auto pos_ = item_->GetPosition();
-                ofs_ << pos_.GetX() << "\t" << pos_.GetY() << std::endl;
-            }
-            ofs_.close();
-        }
-        
-        ofs_.open("PICO.dat", std::ios::out);
-        if (ofs_.is_open())
-        {
-            for (auto& item_ : pico)
-            {
-                auto pos_ = item_->GetPosition();
-                ofs_ << pos_.GetX() << "\t" << pos_.GetY() << std::endl;
-            }
-            ofs_.close();
-        }
-    }
+private:
+    const PrintType m_type;
+    const std::string m_head;
+    const std::string m_tail;
+
 };
 
 

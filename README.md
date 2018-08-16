@@ -64,7 +64,7 @@ Please read [CONTRIBUTING.md]() for details on our code of conduct, and the proc
 
 ## Authors
 * **Luis Diez** [email](mailto:ldiez@tlmat.unican.es)
-* **RamÃ³n AgÃ¼ero**
+* **Ramón Agüero**
 
 
 ## License
@@ -73,5 +73,5 @@ Please read [CONTRIBUTING.md]() for details on our code of conduct, and the proc
 ## Acknowledgments
 
 * Johnny Choque
-* Paula RadrÃ­guez
-* Paula SarasÃºa
+* Paula Radríguez
+* Paula Sarasúa

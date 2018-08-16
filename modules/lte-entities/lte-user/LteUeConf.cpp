@@ -5,7 +5,7 @@
 
 LOG_REGISTER_MODULE("LteUeConf");
 
-LteUeConf::LteUeConf(std::string&& filename)
+LteUeConf::LteUeConf(std::string&& filename, double alpha)
 : m_rxGain(0.0)
 , m_txGain(0.0)
 , m_noiseFigure(0.0)
@@ -16,7 +16,7 @@ LteUeConf::LteUeConf(std::string&& filename)
     m_noiseFigure = conf_.Get<double>("USER.LTE_UE.NOISE_FIGURE");
     m_ulSinrTh = conf_.Get<double>("USER.LTE_UE.UL_SINR_TH");
     m_pMax = units::MilliWatt(conf_.Get<double>("USER.LTE_UE.P_MAX"));
-    m_alpha = conf_.Get<double>("USER.LTE_UE.UL_ALPHA");
+    m_alpha = alpha != 0.0 ? alpha : conf_.Get<double>("USER.LTE_UE.UL_ALPHA");
     INFO("LTE UE is configure with: ")
     INFO("    Rx gain of ", m_rxGain.RawVal(), "dB");
     INFO("    NF of ", m_noiseFigure.RawVal(), "dB");

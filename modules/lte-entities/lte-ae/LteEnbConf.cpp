@@ -15,12 +15,14 @@ LteEnbConf::LteEnbConf(EnbType enbType, std::string&& path)
     BEG;
 
     ConfigXml conf_(path);
+    
     auto strEnbType_ = ToStr(m_enbType);
-
+    m_cellSetName = strEnbType_+"_CELL";
+    strEnbType_ = "ENB." + strEnbType_;
     m_numCells = conf_.Get<std::uint32_t>(strEnbType_ + ".CELLS_NUM", 1u);
     m_freq = conf_.Get<double>(strEnbType_ + ".FREQ_GHZ");
     m_angle = conf_.Get<double>(strEnbType_ + ".SECTOR_ANGLE", 0.0);
-    m_cellSetName = strEnbType_+"_CELL";
+    
     
     INFO ("eNB ", strEnbType_, " is configured with");
     INFO ("    ", m_numCells, " cells");

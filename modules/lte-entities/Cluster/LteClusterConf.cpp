@@ -9,8 +9,9 @@ LteClusterConf::LteClusterConf(std::string const& path, std::string const& name)
 {
     BEG;
     ConfigXml cxml_(path);
-    m_macroNumber = cxml_.Get<std::uint32_t>(name + ".MACRO_NUMBER");
-    m_picoNumber = cxml_.Get<std::uint32_t>(name + ".PICO_NUMBER");
+    auto name2 = "ENB." + name;
+    m_macroNumber = cxml_.Get<std::uint32_t>(name2 + ".MACRO_NUMBER");
+    m_picoNumber = cxml_.Get<std::uint32_t>(name2 + ".PICO_NUMBER");
     END;
 }
 

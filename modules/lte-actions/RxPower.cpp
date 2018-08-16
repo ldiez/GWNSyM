@@ -2,7 +2,6 @@
 #include "PathLoss.h"
 #include "Antenna.h"
 #include "Log.h"
-#include "ThreadPool.h"
 #include "Sinr.h"
 
 LOG_REGISTER_MODULE("RxPower");
@@ -61,6 +60,7 @@ void
 LteRxPower(gnsm::Ptr_t<User> user, gnsm::Ptr_t<LteEnb> ae, AntennaType_e ant,
         PropType_e prop) {
     BEG;
+    
     auto lteUe_ = user->GetLteDev();
     auto ueRxGain_ = lteUe_->GetConfiguration().GetRxGain();
     auto ueTxGain_ = lteUe_->GetConfiguration().GetTxGain();

@@ -22,7 +22,8 @@ LteCellConf::LteCellConf(EnbType enbType, std::string const& path)
     ConfigXml conf_(path);
 
     auto strEnbType_ = ToStr(m_type);
-    m_capacity = conf_.Get<double>(strEnbType_ + ".CELL.CAPACITY");
+    strEnbType_ = "ENB." + strEnbType_;
+    m_capacity = conf_.Get<double>( strEnbType_ + ".CELL.CAPACITY");
     m_txPower = ParsePow(conf_.GetAttr<>(strEnbType_ + ".CELL.TX_POWER", "units"),
                          conf_.Get<double>(strEnbType_ + ".CELL.TX_POWER"));
     m_txGain = conf_.Get<double>(strEnbType_ + ".CELL.TX_GAIN");

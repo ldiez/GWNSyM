@@ -7,7 +7,7 @@
 class LteUeConf
 {
 public:
-    LteUeConf ( std::string&& filename );
+    LteUeConf ( std::string&& filename, double alpha = 0.0 );
     
     /**
      * \brief Noise figure of the user terminal in dB

@@ -9,17 +9,19 @@ class User;
  * \problem
  * minimize \sum_{i \in U}{x_i}
  * s.t. 
- *      x_i - \sum_{j != i}{B_{ij} x_j} <= A_i     
+ *      -x_i + \sum_{j != i}{B_{ij} x_j} <= A_i     
  *      0 <= x_i <= max_i
  * 
- * A_i = SINRth_i \cdot \sigma^2*NF_{\beta(i)}/L_{i\beta(i)}
- * B_{ij} = SINRth_i N_j r_{ij}/{N_{\beta(j)} L_{j\beta(i) L_{i\beta(i)}} } 
+ * A_i = -SINRth_i * \sigma^2*NF_{\beta(i)} * \gamma_{i\beta(i)}
+ * B_{ij} = SINRth_i * \gamma_{i\beta(i)/\gamma_{j\beta(i)}} * N_j r_{ij}/{N_{\beta(j)} 
  */
 class UplinkPowerLP {
 public:
     UplinkPowerLP();
     ~UplinkPowerLP();
     void operator()(gnsm::Vec_t<User> users);
+    
+    void SetIteration(gnsm::Id_t it);
 private:
     void Clear ();
     void FilterUsers (gnsm::Vec_t<User> users);

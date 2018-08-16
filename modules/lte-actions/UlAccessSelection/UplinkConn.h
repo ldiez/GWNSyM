@@ -26,8 +26,6 @@ public:
 
 private:
 
-    double Nrbs(gnsm::Ptr_t<User>& user);
-
     void SelectRsrp(gnsm::Ptr_t<User>& user);
     void SelectPl(gnsm::Ptr_t<User>& user);
     void SelectCre(gnsm::Ptr_t<User>& user);
