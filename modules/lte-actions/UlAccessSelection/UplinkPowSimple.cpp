@@ -32,8 +32,15 @@ OlPowerControl(gnsm::Ptr_t<User> u)
     auto snrTh = u->GetLteDev()->GetConfiguration().UlSinrTh();
     auto alpha = u->GetLteDev()->GetConfiguration().GetAlpha();
     auto p = GetNoise(u, cell).Amp(snrTh).Amp(units::dB(alpha * pl.RawVal()));
+    
+//    UINFO ("User",u->GetId(), " pathLoss ", pl.RawVal(), " dB", " tx power ", p.GetDbm(), " dBm");
+    
     auto pmax = u->GetLteDev()->GetConfiguration().GetPmax();
     p = p > pmax ? pmax : p;
+//    if (p.GetMilliWatt() < 1e-4) {
+//        p = Power(units::MilliWatt(1e-4));
+//    }
+//    UINFO ("User ", u->GetId(), " transmits with ", p.GetDbm(), " dBm")
     u->GetLteDev()->UlSetPower(p);
     END;
 }
@@ -48,7 +55,7 @@ void
 UplinkPowSimple::SetIteration(std::uint32_t iter)
 {
     BEG;
-    if (iter % 10 == 0)
+    if (iter % 100 == 0)
     {
         UINFO("Iteration ", iter);
     }

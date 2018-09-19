@@ -27,8 +27,11 @@ namespace gnsm {
         BEG
         assert(namePath.size() == 2 &&
                 "In Configurer::GetParamInt ==> Bad manePathSize");
+        
+        
 
         std::string value_;
+        
         if (m_configFile.getKeyValue(const_cast<char*> (namePath[0].c_str())
                 , const_cast<char*> (namePath[1].c_str()), value_)) {
             MSG_ASSERT(false, "BAD param. reading: ", namePath[0].c_str(), " :: ", namePath[1].c_str());

@@ -101,8 +101,6 @@ struct BaseType
 
 protected:
 
-
-
     using InnerRefTypes_t = std::unordered_map<KnotName, BaseTypePtr_t>;
     using Creation_t = std::unordered_map<std::string, std::uint32_t>;
 
@@ -116,8 +114,6 @@ protected:
      * \return --
      */
     void PushFrontKnot ( KnotName const& tree );
-
-
 
     Creation_t m_creation;
     InnerRefTypes_t m_innerRefTypes;

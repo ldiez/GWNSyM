@@ -18,7 +18,7 @@ UplinkPowCl::SetIteration(gnsm::Id_t it)
     m_currIter = it;
     //    INFO("");
     //    INFO("===================================================");
-    if (it % 10 == 0)
+    if (it == 1 or it % 10 == 0)
     {
         UINFO("Iteration ", it);
     }
@@ -43,6 +43,10 @@ ClPowerControlInter(gnsm::Ptr_t<User> u)
     auto alpha = u->GetLteDev()->GetConfiguration().GetAlpha();
     auto p = GetNoise(u, cell) + u->GetLteDev()->GetPrevUlInterf(); // noise plus interference
     p.Amp(snrTh).Amp(units::dB(alpha * pl.RawVal()));
+//    if (p.GetMilliWatt() < 1e-4)
+//    {
+//        p = Power(units::MilliWatt(1e-4));
+//    }
     u->GetLteDev()->UlSetPower(p);
     END;
 }
@@ -53,13 +57,21 @@ ClPowerControlSinr(gnsm::Ptr_t<User> u)
     BEG;
     auto snrTh = u->GetLteDev()->GetConfiguration().UlSinrTh();
     auto prevUlPow = u->GetLteDev()->GetPrevUlConn().m_power;
-    auto prevSnr = u->GetLteDev()->GetPrevUlConn().m_sinr;
+    INFO("User ", u->GetId(), " Transmitted with ", prevUlPow.GetDbm(), "dBm")
+            auto prevSnr = u->GetLteDev()->GetPrevUlConn().m_sinr;
     prevUlPow.Amp(snrTh).Att(units::dB(prevSnr.SinrLog()));
-    //    INFO ("User ", u->GetId(), " Transmitted with ", prevUlPow.GetDbm(), "dBm")
-    //    INFO ("User ", u->GetId(), " deficit ", snrTh.RawVal() - prevSnr.SinrLog(), "dB")
-    //    if (prevUlPow.GetMilliWatt() < 0){
-    //        prevUlPow = Power(units::MilliWatt(1e-6));
-    //    }
+    INFO("User ", u->GetId(), " Transmits with ", prevUlPow.GetDbm(), "dBm")
+    INFO("User ", u->GetId(), " deficit ", snrTh.RawVal() - prevSnr.SinrLog(), "dB")
+//    if (prevUlPow.GetMilliWatt() < 1e-4)
+//    {
+//        prevUlPow = Power(units::MilliWatt(1e-4));
+//    }
+
+    if (prevUlPow > u->GetLteDev()->GetConfiguration().GetPmax())
+    {
+        prevUlPow = u->GetLteDev()->GetConfiguration().GetPmax();
+    }
+
     u->GetLteDev()->UlSetPower(prevUlPow);
     END;
 }
@@ -72,29 +84,29 @@ UplinkPowCl::operator()(gnsm::Vec_t<User> us)
     {
         if (!isConnected(u->GetLteDev()))
         {
-            INFO("User ", u->GetId(), " not connected!! ");
+            //            UINFO("User ", u->GetId(), " not connected!! ");
             continue;
         }
-        //        INFO("");
-        //        INFO("User ", u->GetId(), " transmitted with ", u->GetLteDev()->GetPrevUlConn().m_power.GetDbm(), " dBm");
-        //        INFO("User ", u->GetId()," At ", u->GetPosition());
-        //        INFO("User ", u->GetId(), " had interference ", u->GetLteDev()->GetPrevUlInterf().GetDbm(), " dBm");
-        //        INFO("User ", u->GetId(), " got SINR ", u->GetLteDev()->GetPrevUlConn().m_sinr.SinrLog(), " dB");
+                INFO("");
+                INFO("User ", u->GetId(), " transmitted with ", u->GetLteDev()->GetPrevUlConn().m_power.GetDbm(), " dBm");
+                INFO("User ", u->GetId()," At ", u->GetPosition());
+                INFO("User ", u->GetId(), " had interference ", u->GetLteDev()->GetPrevUlInterf().GetDbm(), " dBm");
+                INFO("User ", u->GetId(), " got SINR ", u->GetLteDev()->GetPrevUlConn().m_sinr.SinrLog(), " dB");
 
 
         if (m_currIter == 1 or u->GetLteDev()->GetPrevUlConn().m_power.GetMilliWatt() == 0)
         {
-            //            std::cout << "  User" << u->GetId() << " OL "<< std::endl;
+            //            std::cout << "  User" << u->GetId() << " OL " << std::endl;
             OlPowerControl(u);
         }
         else if (m_mode == ClMode::INTER)
         {
-            //            std::cout << "  User" << u->GetId() << " CL INTER "<< std::endl;
+            //            std::cout << "  User" << u->GetId() << " CL INTER " << std::endl;
             ClPowerControlInter(u);
         }
         else if (m_mode == ClMode::SINR)
         {
-            //            std::cout << "  User" << u->GetId() << " CL SINR "<< std::endl;
+            //            std::cout << "  User" << u->GetId() << " CL SINR " << std::endl;
             ClPowerControlSinr(u);
         }
         //        INFO("User ", u->GetId(), " transmits with ", u->GetLteDev()->GetUlConnInfo().m_power.GetDbm(), " dBm");

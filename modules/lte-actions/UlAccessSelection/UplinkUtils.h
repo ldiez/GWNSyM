@@ -42,6 +42,12 @@ GetPathloss(gnsm::Ptr_t<User> u, gnsm::Ptr_t<LteCell> c)
     return u->GetLteDev()->GetCellUl(c).m_pl;
 }
 
+inline units::dB
+GetShadow(gnsm::Ptr_t<User> u, gnsm::Ptr_t<LteCell> c)
+{
+    return u->GetLteDev()->GetCellUl(c).m_shadow;
+}
+
 inline double
 GetInterferenceRatio(gnsm::Ptr_t<LteCell> cServ, gnsm::Ptr_t<User> uInt)
 {
@@ -60,8 +66,10 @@ GetInterferenceRatio(gnsm::Ptr_t<LteCell> cServ, gnsm::Ptr_t<User> uInt)
     // 3.-
     auto smallerCell = std::min(sizeInt, sizeServ);
     auto largerCell = std::max(sizeInt, sizeServ);
-    auto ratio = (1 / (sizeInt * sizeServ))*(smallerCell / largerCell);
+    auto ratio = (1.0 / (1.0 * sizeInt * sizeServ))*(smallerCell / largerCell);
     //        auto ratio = (nrbsInt / (sizeInt * sizeServ));
+    ratio = 1.0 / sizeInt;
+    //    ratio = 0;
     return ratio;
 }
 
@@ -110,8 +118,7 @@ GetDemandRbs(gnsm::Ptr_t<User>& user)
 inline bool
 IfAffordableUlConnection(units::dB pl)
 {
-    return true;
-    if (pl >= units::dB(160))
+    if (pl.RawVal() >= 140)
     {
         return false;
     }

@@ -35,7 +35,10 @@ void
 UplinkPowerLP::SetIteration(gnsm::Id_t it)
 {
     BEG;
-    UINFO("Iteration ", it);
+    if (it % 100 == 0)
+    {
+        UINFO("Iteration ", it);
+    }
     END;
 }
 
@@ -51,7 +54,6 @@ UplinkPowerLP::Clear()
     m_matBs.clear();
     if (m_lp != nullptr)
     {
-
         glp_delete_prob(m_lp);
     }
     m_lp = glp_create_prob();
@@ -73,9 +75,10 @@ UplinkPowerLP::FilterUsers(gnsm::Vec_t<User> users)
         if (isConnected(u->GetLteDev()))
         {
             m_targetUsers.push_back(u);
-        } else 
+        }
+        else
         {
-            INFO ("User ", u->GetId(), " is NOT connected")
+            INFO("User ", u->GetId(), " is NOT connected")
         }
     }
     END;
@@ -262,7 +265,7 @@ UplinkPowerLP::Solve(void)
         auto status = glp_get_status(m_lp);
         if (status != GLP_OPT)
         {
-            UWARN("Status: ", GlpStatStr(status));
+//            UWARN("Status: ", GlpStatStr(status));
             Clear();
             return;
         }
@@ -288,7 +291,7 @@ UplinkPowerLP::SetPower(void)
         }
         else
         {
-//            UINFO ("User ", u->GetId(), " to ", m_sol[i], "mw");
+            INFO("User ", u->GetId(), " to ", m_sol[i], "mw");
             u->GetLteDev()->UlSetPower(Power(units::MilliWatt(m_sol[i])));
         }
     }

@@ -26,16 +26,18 @@ public:
     };
 
 
-    PrintUsers(PrintType type, UlcpType = UlcpType::OL);
+    PrintUsers(PrintType type, UlcpType pc = UlcpType::OL, std::string asMode = "");
     void SetIteration(std::uint32_t iter);
-    void operator()(gnsm::Vec_t<User> us);
+    void operator()(gnsm::Vec_t<User> us, gnsm::Vec_t<LteEnb> picoEnbs);
 
     const PrintType m_printType;
     const UlcpType m_ulcpType;
+    const std::string m_asModeStr;
 private:
     
     std::uint32_t m_currIter;
     std::uint32_t m_nusers;
+    std::uint32_t m_npicos;
 
     struct posRef
     {

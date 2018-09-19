@@ -23,7 +23,6 @@ LteEnbConf::LteEnbConf(EnbType enbType, std::string&& path)
     m_freq = conf_.Get<double>(strEnbType_ + ".FREQ_GHZ");
     m_angle = conf_.Get<double>(strEnbType_ + ".SECTOR_ANGLE", 0.0);
     
-    
     INFO ("eNB ", strEnbType_, " is configured with");
     INFO ("    ", m_numCells, " cells");
     INFO ("    operating frequency ", m_freq.RawVal(), " GHz");

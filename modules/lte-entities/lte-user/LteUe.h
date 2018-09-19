@@ -18,16 +18,20 @@ public:
         CellScan(gnsm::Id_t enbId = 0,
                 gnsm::Ptr_t<LteCell> cell = nullptr,
                 Power rsrp = Power(units::Watt(0.0)),
-                EnbType type = EnbType::NONE)
+                EnbType type = EnbType::NONE,
+                units::dB shadow = units::dB(0.0))
         : m_enbId(enbId)
         , m_cell(cell)
         , m_rsrp(rsrp)
-        , m_type(type) {
+        , m_type(type) 
+        , m_shadow(shadow)        
+        {
         }
         gnsm::Id_t m_enbId;
         gnsm::Ptr_t<LteCell> m_cell;
         Power m_rsrp;
         EnbType m_type;
+        units::dB m_shadow;
     };
 
     struct UlLosses {
@@ -35,16 +39,20 @@ public:
         UlLosses(gnsm::Id_t enbId = 0,
                 gnsm::Ptr_t<LteCell> cell = nullptr,
                 units::dB pl = units::dB(0.0),
-                EnbType type = EnbType::NONE)
+                EnbType type = EnbType::NONE,
+                units::dB shadow = units::dB(0.0))
         : m_enbId(enbId)
         , m_cell(cell)
         , m_pl(pl)
-        , m_type(type) {
+        , m_type(type) 
+        , m_shadow(shadow)
+        {
         }
         gnsm::Id_t m_enbId;
         gnsm::Ptr_t<LteCell> m_cell;
         units::dB m_pl;
         EnbType m_type;
+        units::dB m_shadow;
     };
 
     using SensedValues_t = std::vector<CellScan>; // DL RSRP sensing
@@ -73,7 +81,7 @@ public:
      * \param type --> Type of the eNB holding the cell
      * \return --
      */
-    void AddCellInfo(gnsm::Id_t embId, gnsm::Ptr_t<LteCell> cell, Power rsrp, units::dB ulPl, EnbType type);
+    void AddCellInfo(gnsm::Id_t embId, gnsm::Ptr_t<LteCell> cell, Power rsrp, units::dB ulPl, EnbType type, units::dB shadow);
 
     /**
      * \brief Provide a list of the cells scanned ordered by the RSRP, the first the highest RSRP

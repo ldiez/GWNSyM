@@ -52,6 +52,9 @@ LteCell::AddDlUser(gnsm::Id_t ue, double cap) {
 bool
 LteCell::AddUlUser(gnsm::Id_t ue, double cap) {
     BEG;
+    m_ulUes.push_back(ue);
+    return true;
+    ///////////////////////////////////////////
     if (m_ulFreeResources >= cap) {
         m_ulUes.push_back(ue);
         m_ulFreeResources -= cap;

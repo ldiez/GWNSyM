@@ -27,7 +27,6 @@ EnbHexLocator::operator()(gnsm::Vec_t<LteEnb> es) {
             MacroHeight_s});
         ++m_ctr;
     }
-    
     END;
 }
 

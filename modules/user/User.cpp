@@ -95,6 +95,7 @@ User::CallUp ( void )
 bool 
 User::IsActive ( void )
 {
+    return true;
     BEG END;
     return (m_connMan.DlDemand().GetBps() > 0.0 || 
             m_connMan.UlDemand().GetBps() > 0.0);

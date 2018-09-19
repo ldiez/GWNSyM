@@ -2,15 +2,12 @@
 #include "lte-user/LteUe.h"
 #include "Log.h"
 #include "UplinkUtils.h"
+#include "Chrono.h"
 
 LOG_REGISTER_MODULE("UplinkConn");
 
-UplinkConn::UplinkConn(Mode m, units::dB picoCre,
-                       units::dB microCre, units::dB macroCre)
+UplinkConn::UplinkConn(Mode m)
 : m_mode(m)
-, m_picoBias(picoCre)
-, m_microbias(microCre)
-, m_macroBias(macroCre)
 {
     BEGEND;
 }
@@ -35,6 +32,7 @@ void
 UplinkConn::operator()(gnsm::Vec_t<User> users)
 {
     BEG;
+    auto start = Now();
     /**
      * Each user has a target SINR.
      * SINR = P0 * PL(1-\alpha)/(NI)
@@ -57,9 +55,11 @@ UplinkConn::operator()(gnsm::Vec_t<User> users)
     {
         for (auto& user_ : users)
         {
+
             SelectCre(user_);
         }
     }
+    INFO(Time2ms(Now() - start), " ms");
     END;
 }
 
@@ -67,18 +67,23 @@ void
 UplinkConn::SelectRsrp(gnsm::Ptr_t<User>& user)
 {
     BEG;
-    auto nrbs_ = GetDemandRbs(user);
-    if (nrbs_ == 0)
+
+    if (!user->IsActive())
     { // no traffic
         return;
     }
+
+    auto nrbs_ = GetDemandRbs(user);
     auto cellInfo_ = user->GetLteDev()->GetOrderedCellDl(0);
     auto cell_ = cellInfo_.m_cell;
 
     if (!IfAffordableUlConnection(GetPathloss(user, cellInfo_.m_cell)))
     {
+        //        WARN("User ", user->GetId(), " not affordable");
         return;
     }
+    //    auto dis = Get3dDistance(user->GetPosition(), cell_->GetEnb()->GetPosition());
+    //    INFO("User ", user->GetId(), " to cell ", cell_->GetEnb()->GetId(), " - ", cell_->GetId(), " with distance ", dis.GetM(), " m")
     Assign(cell_, user, nrbs_);
     END;
 }
@@ -87,27 +92,26 @@ void
 UplinkConn::SelectPl(gnsm::Ptr_t<User>& user)
 {
     BEG;
-    auto nrbs_ = GetDemandRbs(user);
-    if (nrbs_ == 0)
+    if (!user->IsActive())
     { // no traffic
-//        UINFO("User ", user->GetId(), " no traffic");
         return;
     }
+
+    auto nrbs_ = GetDemandRbs(user);
     auto cellsInfo_ = user->GetLteDev()->GetOrderedCellsUl();
     if (cellsInfo_.size() == 0)
     {
-//        UINFO("User ", user->GetId(), " no cells");
         return;
     }
     auto cellInfo_ = cellsInfo_.at(0);
 
     if (!IfAffordableUlConnection(cellInfo_.m_pl))
     {
-//        UINFO("User ", user->GetId(), " not affordable");
         return;
     }
     auto cell_ = cellInfo_.m_cell;
-//    UINFO("User ", user->GetId(), " to ", cellInfo_.m_enbId, "-", cellInfo_.m_cell->GetId(), " with PL ", cellInfo_.m_pl.RawVal(), " dB")
+    //    auto dis = Get3dDistance(user->GetPosition(), cell_->GetEnb()->GetPosition());
+    //    INFO("User ", user->GetId(), " to cell ", cell_->GetEnb()->GetId(), " - ", cell_->GetId(), " with distance ", dis.GetM(), " m")
     Assign(cell_, user, nrbs_);
     END;
 }
@@ -116,11 +120,13 @@ void
 UplinkConn::SelectCre(gnsm::Ptr_t<User>& user)
 {
     BEG;
-    auto nrbs_ = GetDemandRbs(user);
-    if (nrbs_ == 0)
+    if (!user->IsActive())
     { // no traffic
+        WARN("User ", user->GetId(), " no traffic");
         return;
     }
+
+    auto nrbs_ = GetDemandRbs(user);
     auto info = user->GetLteDev()->GetOrderedCellsDl();
     std::map<Power, gnsm::Ptr_t < LteCell>, std::greater < Power>> auxOrder;
 
@@ -128,28 +134,34 @@ UplinkConn::SelectCre(gnsm::Ptr_t<User>& user)
     {
         if (!IfAffordableUlConnection(GetPathloss(user, item.m_cell)))
         {
+            //            UINFO("User ", user->GetId(), " not affordable");
+            //            UINFO("Cell is ", item.m_cell->GetEnb()->GetId(), " - ", item.m_cell->GetId())
             continue;
         }
         auto rsrp = item.m_rsrp;
+        units::dB bias(0);
         switch (item.m_type)
         {
         case EnbType::PICO:
-            rsrp.Amp(m_picoBias);
+            bias = user->GetLteDev()->GetConfiguration().GetBiasPico();
             break;
         case EnbType::MICRO:
-            rsrp.Amp(m_microbias);
+            bias = user->GetLteDev()->GetConfiguration().GetBiasMicro();
             break;
         case EnbType::MACRO:
         default:
-            rsrp.Amp(m_macroBias);
+            bias = user->GetLteDev()->GetConfiguration().GetBiasMacro();
             break;
         }
+        rsrp.Amp(bias);
         auxOrder.insert({rsrp, item.m_cell});
     }
-
-
-
-    auto cell_ = auxOrder.begin()->second;
-    Assign(cell_, user, nrbs_);
+    if (auxOrder.size() > 0)
+    {
+        auto cell_ = auxOrder.begin()->second;
+        //    auto dis = Get3dDistance(user->GetPosition(), cell_->GetEnb()->GetPosition());
+        //    INFO("User ", user->GetId(), " to cell ", cell_->GetEnb()->GetId(), " - ", cell_->GetId(), " with distance ", dis.GetM(), " m")
+        Assign(cell_, user, nrbs_);
+    }
     END;
 }

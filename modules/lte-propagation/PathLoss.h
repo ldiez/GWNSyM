@@ -7,6 +7,13 @@
 namespace LTE
 {
 
+enum class PropType_e : std::uint8_t
+{
+    LOS,
+    NLOS,
+    FULL
+};
+
 /**
  * \ingroup LTE
  * \brief Calculation of pathloss between the user equipments and the access element for 
@@ -22,9 +29,11 @@ namespace LTE
  * \param hut --> Height of the user equipment
  * \return <-- Received signal power in dB
  */
-units::dB UmaPathloss ( units::m distance, units::GHz frec, units::m hbs, units::m hut );
+std::tuple<units::dB, PropType_e> UmaPathloss ( units::m distance, units::GHz frec, units::m hbs, units::m hut );
 units::dB UmaPathloss_LOS ( units::m distance, units::GHz frec, units::m hbs, units::m hut );
 units::dB UmaPathloss_NLOS ( units::m distance, units::GHz frec, units::m hbs, units::m hut );
+units::dB UmaShadow_LOS ();
+units::dB UmaShadow_NLOS ();
 
 /**
  * \brief Path loss for urban micro cell 
@@ -35,10 +44,11 @@ units::dB UmaPathloss_NLOS ( units::m distance, units::GHz frec, units::m hbs, u
  * \param hut --> Height of the user equipment
  * \return <-- Received signal power in dB
  */
-units::dB UmiPathloss ( units::m distance, units::GHz frec, units::m hbs, units::m hut );
+std::tuple<units::dB, PropType_e> UmiPathloss ( units::m distance, units::GHz frec, units::m hbs, units::m hut );
 units::dB UmiPathloss_LOS ( units::m distance, units::GHz frec, units::m hbs, units::m hut );
 units::dB UmiPathloss_NLOS ( units::m distance, units::GHz frec, units::m hbs, units::m hut );
-
+units::dB UmiShadow_LOS ();
+units::dB UmiShadow_NLOS ();
 
 /**
  * \brief Path loss for urban pico cells
@@ -48,8 +58,10 @@ units::dB UmiPathloss_NLOS ( units::m distance, units::GHz frec, units::m hbs, u
  * \param hut --> Height of the UE
  * \return <-- Received signal power in db
  */
-units::dB UpiPathloss ( units::m distance, units::GHz frec, units::m hbs, units::m hut);
+std::tuple<units::dB, PropType_e> UpiPathloss ( units::m distance, units::GHz frec, units::m hbs, units::m hut);
 units::dB UpiPathloss_LOS ( units::m distance, units::GHz frec, units::m hbs, units::m hut);
 units::dB UpiPathloss_NLOS ( units::m distance, units::GHz frec, units::m hbs, units::m hut);
+units::dB UpiShadow_LOS ();
+units::dB UpiShadow_NLOS ();
 } // namespace LTE
 #endif	/* LTELINKQUALITY_H */

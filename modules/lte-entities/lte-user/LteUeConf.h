@@ -7,7 +7,7 @@
 class LteUeConf
 {
 public:
-    LteUeConf ( std::string&& filename, double alpha = 0.0 );
+    LteUeConf ( std::string&& filename);
     
     /**
      * \brief Noise figure of the user terminal in dB
@@ -43,6 +43,13 @@ public:
      */
     double GetAlpha ( void ) const;
     
+    /**
+     * \brief Get bias values
+     */
+    units::dB GetBiasMacro ( void ) const;
+    units::dB GetBiasMicro ( void ) const;
+    units::dB GetBiasPico ( void ) const;
+   
 private:
     units::dB m_rxGain;
     units::dB m_txGain;
@@ -50,6 +57,8 @@ private:
     units::dB m_ulSinrTh;
     Power m_pMax;
     double m_alpha;
-
+    units::dB m_biasMacro;
+    units::dB m_biasMicro;
+    units::dB m_biasPico;
 };
 #endif	/* LTEUECONF_H */

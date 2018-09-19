@@ -6,6 +6,7 @@
 #include <iomanip>
 #include "lte-ae/LteCell.h"
 #include "lte-ae/LteEnb.h"
+#include "UlAccessSelection/UplinkUtils.h"
 
 LOG_REGISTER_MODULE("PrintUsers");
 
@@ -83,16 +84,24 @@ PrintUlConn(Usr u, std::ostream& os)
 {
     auto cells = u->GetLteDev()->GetUlConnList();
     auto info = u->GetLteDev()->GetUlConnInfo();
-    os << "== " << "UPLINK connection \n";
-    os << "  " << "#RBs = " << info.m_rbs << " with "
-            << info.m_power.GetDbm()
-            << " dBm ( " << info.m_power.GetMilliWatt() << " mW)\n";
-    os << "  Effective SINR " << info.m_sinr.SinrLog() << " dB\n";
-    os << "  " << "Interference " << info.m_sinr.InterferenceDbm() << " dB\n";
+    os << "== " << "UPLINK connection \n"
+            << "\t#RBs = " << info.m_rbs << " with: "
+            << "\tPL " << GetPathloss(u, GetServCell(u)) << " dB\n"
+            << "\teNB type " << u->GetLteDev()->GetCellDl(GetServCell(u)).m_type << "\n"
+            << "\tRSRP " << u->GetLteDev()->GetCellDl(GetServCell(u)).m_rsrp.GetDbm() << "dBm\n"
+            //            << "\tPower " << info.m_power.GetDbm() << " dBm ( " << info.m_power.GetMilliWatt() << " mW)\n"
+            //            << "\tEffective SINR " << info.m_sinr.SinrLog() << " dB\n"
+            //            << "\tInterference " << info.m_sinr.InterferenceDbm() << " dB\n"
+            ;
     for (auto& c : cells)
     {
-        os << "  " << "eNB " << c->GetEnb()->GetId() << " " << c->GetId() << "\n";
+        os << "\t" << "eNB " << c->GetEnb()->GetId() << " " << c->GetId() << "\n";
     }
+    if (u->GetLteDev()->GetCellDl(GetServCell(u)).m_type == EnbType::PICO)
+    {
+        PrintDlSensed(u, os);
+    }
+
 }
 
 void
@@ -216,7 +225,7 @@ PrintUsers::PrintSinr(gnsm::Vec_t<User> us)
         //        }
         //        ofs << (snr > 30 ? 30 : snr) << "  ";
         INFO("user", u->GetId(), " SINR = ", snr, "dB");
-        ofs << snr << "  ";
+        ofs << std::round(snr*100)/100.0 << "  ";
     }
     ofs << "\n";
     ofs.close();
@@ -240,6 +249,7 @@ PrintUsers::PrintTxPower(gnsm::Vec_t<User> us)
         //        auto enbPos = connCell->GetEnb()->GetPosition();
         //        auto uePos = u->GetPosition();
         //        auto pl = u->GetLteDev()->GetCellUl(connCell).m_pl;
+        INFO("user", u->GetId(), " POW = ",  u->GetLteDev()->GetUlConnInfo().m_power.GetDbm(), " dBm");
         ofs << pow << "  "; // << pl.m_val << "\t" << GetPlanarDistance(enbPos, uePos).GetM() << "\n";
         ++ctr;
     }
@@ -248,9 +258,10 @@ PrintUsers::PrintTxPower(gnsm::Vec_t<User> us)
     ofs.close();
 }
 
-PrintUsers::PrintUsers(PrintType type, UlcpType ulcp)
+PrintUsers::PrintUsers(PrintType type, UlcpType ulcp, std::string asMode)
 : m_printType(type)
 , m_ulcpType(ulcp)
+, m_asModeStr(asMode)
 {
 
 }
@@ -259,15 +270,17 @@ void
 PrintUsers::SetIteration(std::uint32_t iter)
 {
     BEG;
+//    UINFO("Iteration = ", iter);
     m_currIter = iter;
     END;
 }
 
 void
-PrintUsers::operator()(gnsm::Vec_t<User> us)
+PrintUsers::operator()(gnsm::Vec_t<User> us, gnsm::Vec_t<LteEnb> picoEnbs)
 {
     BEG;
     m_nusers = us.size();
+    m_npicos = picoEnbs.size();
     switch (m_printType)
     {
     case PrintType::RSRPMAP:
@@ -299,11 +312,12 @@ PrintUsers::operator()(gnsm::Vec_t<User> us)
             //            PrintDlSensed(u, std::cout);
             //            PrintDlConn(u, std::cout);
             //            PrintPrevDlConn(u, std::cout);
-            PrintUlSensed(u, std::cout);
+            //            PrintUlSensed(u, std::cout);
             PrintUlConn(u, std::cout);
             //            PrintPrevUlConn(u, std::cout);
         }
     }
+    INFO ("");
     END;
 }
 
@@ -313,10 +327,12 @@ PrintUsers::OpenFile(std::ofstream& fs, std::stringstream const& ss)
     BEG;
     if (m_currIter == 1)
     {
+//        UINFO ("Creating file ", ss.str())
         fs.open(ss.str(), std::ios::out);
     }
     else
     {
+//        UINFO ("Appending in file ", ss.str())
         fs.open(ss.str(), std::ios::app);
     }
     END;
@@ -327,13 +343,19 @@ PrintUsers::GetName(gnsm::Ptr_t<User> u, std::stringstream& ss, std::string med)
 {
     BEG;
     auto sinrTh = u->GetLteDev()->GetConfiguration().UlSinrTh().RawVal();
-    ss << "./tests/hom_";
-    ss << std::setw(2) << std::setfill('0') << sinrTh << "_"
-            << std::setw(2) << std::setfill('0') << m_nusers << "_";
+    auto biasPico = int(u->GetLteDev()->GetConfiguration().GetBiasPico().RawVal());
+    ss << "./tests/het_";
+    ss << "sinr_" << std::setw(2) << std::setfill('0') << sinrTh << "_"
+            << "users_" << std::setw(3) << std::setfill('0') << m_nusers << "_"
+            << "picos_" << std::setw(3) << std::setfill('0') << m_npicos << "_"
+            << m_asModeStr << "_"
+            << std::setw(3) << std::setfill('0') << biasPico << "_"
+            ;
     if (m_ulcpType == UlcpType::OL)
     {
+        auto alpha = int(u->GetLteDev()->GetConfiguration().GetAlpha() * 10);
         ss << "ol" << med << "_" << std::setw(2) << std::setfill('0')
-                << int(10 * u->GetLteDev()->GetConfiguration().GetAlpha())
+                << alpha
                 << ".dat";
     }
     else
@@ -342,5 +364,6 @@ PrintUsers::GetName(gnsm::Ptr_t<User> u, std::stringstream& ss, std::string med)
                 m_ulcpType == UlcpType::CL ? ("cl" + med) : ("nc" + med))
                 << ".dat";
     }
+    
     END;
 }

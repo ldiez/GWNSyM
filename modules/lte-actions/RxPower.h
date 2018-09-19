@@ -3,20 +3,16 @@
 
 #include "User.h"
 #include "lte-ae/LteEnb.h"
+#include "PathLoss.h"
 
-
+using namespace LTE;
 enum class AntennaType_e : std::uint8_t
 {
     HONLY,
     HV
 };
 
-enum class PropType_e : std::uint8_t
-{
-    LOS,
-    NLOS,
-    FULL
-};
+
 
 /**
  * \brief Calculate received power at each user from each base station (sectors).
