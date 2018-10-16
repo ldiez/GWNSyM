@@ -1,4 +1,4 @@
-# GWNSiM: Generic Wireless Network System Modeler
+# GNSiM: Generic Network System Modeler
 
 One Paragraph of project description goes here
 
@@ -64,7 +64,7 @@ Please read [CONTRIBUTING.md]() for details on our code of conduct, and the proc
 
 ## Authors
 * **Luis Diez** [email](mailto:ldiez@tlmat.unican.es)
-* **Ramón Agüero**
+* **RamÃ³n AgÃ¼ero**
 
 
 ## License
@@ -73,5 +73,5 @@ Please read [CONTRIBUTING.md]() for details on our code of conduct, and the proc
 ## Acknowledgments
 
 * Johnny Choque
-* Paula Radríguez
-* Paula Sarasúa
+* Paula RadrÃ­guez
+* Paula SarasÃºa
