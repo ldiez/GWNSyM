@@ -80,6 +80,7 @@ LteRxPower(gnsm::Ptr_t<User> user, gnsm::Ptr_t<LteEnb> ae, AntennaType_e ant,
     PropType_e pt_;
     std::tie(pl_, pt_) = ComputePathloss(ae->GetConfiguration().GetType(), user, ae, prop);
     auto shadow = ComputeShadow(ae->GetConfiguration().GetType(), pt_);
+    pl_ += shadow;
     for (auto& cell_ : ae->GetCells()) {
         auto cellTxGain_ = cell_->GetConfiguration().GetTxGain();
         auto cellRxGain_ = cell_->GetConfiguration().GetRxGain();

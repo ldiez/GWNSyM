@@ -241,9 +241,9 @@ PrintUsers::PrintTxPower(gnsm::Vec_t<User> us)
     auto ctr = 0u;
     for (auto& u : us)
     {
-        //        if (!isConnected(u->GetLteDev())) {
-        //            continue;
-        //        }
+//                if (!isConnected(u->GetLteDev())) {
+//                    UINFO("user", u->GetId(), " is not connected!!");
+//                }
         auto pow = u->GetLteDev()->GetUlConnInfo().m_power.GetMilliWatt();
         //        auto connCell = u->GetLteDev()->GetUlConnList().at(0);
         //        auto enbPos = connCell->GetEnb()->GetPosition();

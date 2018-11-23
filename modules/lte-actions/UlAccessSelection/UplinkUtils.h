@@ -66,9 +66,9 @@ GetInterferenceRatio(gnsm::Ptr_t<LteCell> cServ, gnsm::Ptr_t<User> uInt)
     // 3.-
     auto smallerCell = std::min(sizeInt, sizeServ);
     auto largerCell = std::max(sizeInt, sizeServ);
-    auto ratio = (1.0 / (1.0 * sizeInt * sizeServ))*(smallerCell / largerCell);
+//    auto ratio = (1.0 / (1.0 * sizeInt * sizeServ))*(smallerCell / largerCell);
     //        auto ratio = (nrbsInt / (sizeInt * sizeServ));
-    ratio = 1.0 / sizeInt;
+    auto ratio = 1.0 / sizeInt;
     //    ratio = 0;
     return ratio;
 }

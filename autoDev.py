@@ -41,11 +41,11 @@ def ChangeConfParam (fn, l1, l2, val, l3 = None) :
     
         
 ## Configure the scenario
-nUsers = [20, 40, 60];#range(50,200+1,100);
+nUsers = [50, 100, 150, 200];#range(50,200+1,100);
 alphas = [1];
 sinrs = [5];#range(0,15+1,15);
-npicos = [0, 10];#range(10,100+1,20);
-nbias = [3, 6, 9];
+npicos = [0, 20, 60, 100];#range(10,100+1,20);
+nbias = [3,6,9];
 for users, sinr, picos, alpha in itertools.product(nUsers, sinrs, npicos, alphas):
     ChangeConfParam (userConfFile, "CRE", "BIAS_PICO", "0");
     changeGlobalParam( ("PICO", "NUMBER", str(picos) ));

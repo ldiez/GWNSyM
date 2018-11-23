@@ -91,7 +91,7 @@ main(int argc, char** argv)
     gnsm::System net;
     {//==|----> define logging levels
         //        LOG_SET_ALL_LEVEL(LogLevel::ALL)
-                LOG_SET_LEVEL("PrintUsers", LogLevel::INFO);
+        //        LOG_SET_LEVEL("PrintUsers", LogLevel::INFO);
         //        LOG_SET_LEVEL("UplinkEffectiveSinr", LogLevel::INFO);
         //        LOG_SET_LEVEL("RxPower", LogLevel::INFO)
         //        LOG_SET_LEVEL("UlClosestConn", LogLevel::INFO);
@@ -137,7 +137,7 @@ main(int argc, char** argv)
         net.Action<RandomAnulusLocator>({"USER"}, units::m(750)); //, 1000);
     }
     {//==|----> scan environment
-        net.Action<ParallelLteScan>({"USER", "ENBS"}, AntennaType_e::HV, PropType_e::LOS);
+        net.Action<ParallelLteScan>({"USER", "ENBS"}, AntennaType_e::HV, PropType_e::FULL);
     }
     {//==|----> access selection
         net.Action<UplinkConn>({"USER"}, astype);
@@ -173,7 +173,7 @@ main(int argc, char** argv)
         net.Action<PrintUsers>({"USER", "PICO"}, PrintUsers::PrintType::EFF_SINR, pctype, asTypeStr);
         net.Action<PrintUsers>({"USER", "PICO"}, PrintUsers::PrintType::UL_TXPOWER, pctype, asTypeStr);
     }
-    auto start = Now();
+//    auto start = Now();
     net.Run();
 //    UINFO(Time2ms(Now() - start), " ms");
     return 0;
